@@ -1,0 +1,17 @@
+/* stylelint-disable at-rule-no-unknown */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8fafc; /* [cite: 6] */
+}
+
+.blur-img { 
+    filter: blur(16px); /* [cite: 6] */
+}
+
+.smooth-transition { 
+    transition: all 0.3s ease; /* [cite: 7] */
+}
