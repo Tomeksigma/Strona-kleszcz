@@ -629,34 +629,36 @@ export default function App() {
             </main>
             
             {/* --- PRZYPIĘTY PASEK NA DOLE (STALE WIDOCZNY) --- */}
+            {/* --- PRZYPIĘTY PASEK NA DOLE (STALE WIDOCZNY) --- */}
             <div className="fixed bottom-0 left-0 w-full z-50 shadow-[0_-5px_15px_-3px_rgba(0,0,0,0.1)]">
                 
-                {/* Sekcja patronatów */}
+                {/* Sekcja patronatów - drastycznie zmniejszone paddingi (py-1.5) */}
                 <section className="bg-white py-1.5 md:py-2 border-t border-gray-200">
                     <div className="max-w-5xl mx-auto px-4 text-center">
+                        {/* Zmniejszony margines dolny (mb-1) i mniejszy tekst */}
                         <h3 className="text-gray-400 font-bold uppercase tracking-widest mb-1 text-[10px]">
                             Patronaty Honorowe i Partnerzy
                         </h3>
                         <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
-                            {/* Logo Lasy Państwowe */}
+                            {/* Logo Lasy Państwowe - skorygowana wielkość (h-8) */}
                             <img 
-                                src="/LogoLP.svg" 
+                                src="/lasy-panstwowe.png" 
                                 alt="Lasy Państwowe" 
-                                className="h-10 md:h-14 object-contain hover:scale-125 transition-transform duration-300"
+                                className="h-8 md:h-10 object-contain hover:scale-125 transition-transform duration-300"
                             />
-                            {/* Logo Państwowa Inspekcja Sanitarna */}
+                            {/* Logo Państwowa Inspekcja Sanitarna - skorygowana wielkość (h-12) */}
                             <img 
-                                src="/PANSTWOWA-INSPEKCJA-SANIT.webp" 
+                                src="/sanepid.png" 
                                 alt="Państwowa Inspekcja Sanitarna" 
-                                className="h-16 md:h-24 object-contain hover:scale-125 transition-transform duration-300"
+                                className="h-12 md:h-16 object-contain hover:scale-125 transition-transform duration-300"
                             />
                         </div>
                     </div>
                 </section>
 
-                {/* Stopka serwisu */}
+                {/* Stopka serwisu - minimalnie chudsza */}
                 <footer className="bg-gray-900 text-gray-400 py-1.5 md:py-2 text-center text-[10px]">
-                    &copy; 2026 Kampania Edukacyjna "Uwaga Kleszcz!". Wszelkie prawa zastrzeżone. {/*[cite: 3] */}
+                    &copy; 2026 Kampania Edukacyjna "Uwaga Kleszcz!". Wszelkie prawa zastrzeżone.
                 </footer>
             </div>
         </div>
