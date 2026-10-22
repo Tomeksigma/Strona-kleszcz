@@ -642,13 +642,13 @@ export default function App() {
                         <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
                             {/* Logo Lasy Państwowe - skorygowana wielkość (h-8) */}
                             <img 
-                                src="/lasy-panstwowe.png" 
+                                src="/LogoLP.svg"
                                 alt="Lasy Państwowe" 
                                 className="h-8 md:h-10 object-contain hover:scale-125 transition-transform duration-300"
                             />
                             {/* Logo Państwowa Inspekcja Sanitarna - skorygowana wielkość (h-12) */}
                             <img 
-                                src="/sanepid.png" 
+                                src="/PANSTWOWA-INSPEKCJA-SANIT.webp" 
                                 alt="Państwowa Inspekcja Sanitarna" 
                                 className="h-12 md:h-16 object-contain hover:scale-125 transition-transform duration-300"
                             />
