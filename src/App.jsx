@@ -295,25 +295,286 @@ const CompetitionView = () => (
     </div>
 );
 
-const SurveyView = () => (
-    <div className="flex flex-col items-center justify-center py-16 text-center animate-fade-in">
-        <div className="bg-white p-10 rounded-2xl shadow-lg max-w-xl w-full border-t-4 border-brand-accent">
-            <h1 className="text-3xl font-bold text-gray-800 mb-4">Ankieta Badawcza</h1>
-            <p className="text-gray-600 mb-8 leading-relaxed">
-                Twoja opinia jest dla nas bardzo ważna! Prosimy o wypełnienie krótkiej ankiety dotyczącej świadomości zagrożeń związanych z kleszczami. Wyniki pomogą nam ulepszyć materiały edukacyjne.
-            </p>
-            <a 
-                href="https://docs.google.com/forms/d/e/1FAIpQLScXXxr2TyR4qYtIfAi6pi89OYarsqzaCtVKkM_Yp70kAm5i-g/viewform" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-block bg-brand hover:bg-brand-dark text-white text-lg font-bold py-4 px-8 rounded-full shadow-md transition-transform transform hover:scale-105"
-            >
-                Przejdź do formularza Google &rarr;
-            </a>
-            <p className="text-sm text-gray-400 mt-6">Ankieta jest całkowicie anonimowa. Wypełnienie zajmuje ok. 3 minuty.</p>
+const SurveyView = () => {
+    // 1. Stany do zarządzania logiką quizu
+    const [step, setStep] = useState('intro'); // intro, quiz, results, certificate
+    const [fullName, setFullName] = useState('');
+    const [consent, setConsent] = useState(false);
+    const [currentQuestion, setCurrentQuestion] = useState(0);
+    const [score, setScore] = useState(0);
+    
+    // Nowe stany dla wysyłki e-mail
+    const [email, setEmail] = useState('');
+    const [isEmailSent, setIsEmailSent] = useState(false);
+    const [isSending, setIsSending] = useState(false);
+
+    // 2. Baza pytań oparta na naszych leśnych artykułach
+    const questions = [
+        {
+            question: "Jak najlepiej ubrać się do lasu, aby uniknąć kleszczy?",
+            options: ["Krótkie spodenki i sandały", "Długie spodnie, zakryte buty i jasne kolory", "Ciemne, luźne ubrania"],
+            answer: 1
+        },
+        {
+            question: "Jaki jest prawidłowy i bezpieczny sposób usunięcia kleszcza?",
+            options: ["Posmarowanie go tłuszczem, aby się udusił", "Wykręcenie go gołymi palcami", "Wyciągnięcie pęsetą zdecydowanym ruchem prosto do góry"],
+            answer: 2
+        },
+        {
+            question: "Przed którą chorobą odkleszczową możemy uchronić się za pomocą szczepionki?",
+            options: ["Borelioza", "Kleszczowe Zapalenie Mózgu (KZM)", "Babeszjoza"],
+            answer: 1
+        },
+        {
+            question: "Gdzie najczęściej przebywają kleszcze w oczekiwaniu na żywiciela?",
+            options: ["Skaczą z koron wysokich drzew", "W trawach i niskich krzewach", "Tylko w głębokim, ciemnym lesie"],
+            answer: 1
+        },
+        {
+            question: "Co należy zrobić od razu po powrocie ze spaceru z psem lub z lasu?",
+            options: ["Dokładnie obejrzeć całe ciało", "Zjeść posiłek i pójść spać", "Wypić gorącą herbatę"],
+            answer: 0
+        }
+    ];
+
+    // 3. Funkcje obsługujące quiz
+    const handleStart = (e) => {
+        e.preventDefault();
+        if (fullName.trim() && consent) {
+            setStep('quiz');
+        }
+    };
+
+    const handleAnswer = (index) => {
+        if (index === questions[currentQuestion].answer) {
+            setScore(score + 1);
+        }
+        if (currentQuestion < questions.length - 1) {
+            setCurrentQuestion(currentQuestion + 1);
+        } else {
+            setStep('results');
+        }
+    };
+
+    const resetQuiz = () => {
+        setStep('intro');
+        setFullName('');
+        setConsent(false);
+        setCurrentQuestion(0);
+        setScore(0);
+        setEmail('');
+        setIsEmailSent(false);
+    };
+
+    // 4. Funkcja symulująca wysyłkę e-maila
+    const handleSendEmail = (e) => {
+        e.preventDefault();
+        if (email.trim()) {
+            setIsSending(true);
+            // Symulacja opóźnienia serwera (w przyszłości tutaj wepniesz API np. EmailJS)
+            setTimeout(() => {
+                setIsSending(false);
+                setIsEmailSent(true);
+            }, 1500);
+        }
+    };
+
+    // 5. Obliczenia wyniku
+    const percentage = (score / questions.length) * 100;
+    const passed = percentage >= 60;
+
+    return (
+        <div className="flex flex-col items-center justify-center py-12 px-4 text-center animate-fade-in">
+            
+            {/* KROK 1: WSTĘP I DANE */}
+            {step === 'intro' && (
+                <div className="bg-white p-10 rounded-2xl shadow-lg max-w-xl w-full border-t-4 border-green-600">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-4">Quiz Edukacyjny</h1>
+                    <p className="text-gray-600 mb-8">Sprawdź swoją wiedzę o kleszczach i zdobądź oficjalny dyplom! (Wymagane minimum 60% poprawnych odpowiedzi).</p>
+                    
+                    <form onSubmit={handleStart} className="space-y-5 text-left">
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-2">Imię i nazwisko (do certyfikatu)</label>
+                            <input 
+                                type="text" 
+                                required 
+                                value={fullName} 
+                                onChange={(e) => setFullName(e.target.value)}
+                                className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition"
+                                placeholder="Np. Jan Kowalski"
+                            />
+                        </div>
+                        <div className="flex items-start gap-3 bg-gray-50 p-4 rounded-lg border border-gray-100">
+                            <input 
+                                type="checkbox" 
+                                required 
+                                id="consent"
+                                checked={consent}
+                                onChange={(e) => setConsent(e.target.checked)}
+                                className="mt-1 w-5 h-5 text-green-600 cursor-pointer"
+                            />
+                            <label htmlFor="consent" className="text-sm text-gray-600 cursor-pointer">
+                                Wyrażam zgodę na przetwarzanie podanych przeze mnie danych w celu wygenerowania imiennego dyplomu ukończenia quizu.
+                            </label>
+                        </div>
+                        <button 
+                            type="submit" 
+                            disabled={!fullName.trim() || !consent}
+                            className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white text-lg font-bold py-4 px-6 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+                        >
+                            Rozpocznij Quiz &rarr;
+                        </button>
+                    </form>
+                </div>
+            )}
+
+            {/* KROK 2: PYTANIA */}
+            {step === 'quiz' && (
+                <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg max-w-2xl w-full border-t-4 border-yellow-500">
+                    <div className="mb-8 flex justify-between items-center text-sm font-bold text-gray-400 uppercase tracking-wider">
+                        <span>Pytanie {currentQuestion + 1} / {questions.length}</span>
+                        <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full">Punkty: {score}</span>
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-800 mb-8 leading-relaxed">
+                        {questions[currentQuestion].question}
+                    </h2>
+                    <div className="space-y-4">
+                        {questions[currentQuestion].options.map((opt, i) => (
+                            <button 
+                                key={i} 
+                                onClick={() => handleAnswer(i)}
+                                className="w-full text-left p-5 rounded-xl border-2 border-gray-100 hover:border-green-500 hover:bg-green-50 hover:shadow-sm transition-all font-medium text-gray-700 text-lg"
+                            >
+                                {opt}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* KROK 3: PODSUMOWANIE WYNIKÓW */}
+            {step === 'results' && (
+                <div className="bg-white p-12 rounded-2xl shadow-lg max-w-xl w-full border-t-4 border-green-600">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-2">Twój Wynik</h1>
+                    <div className={`text-6xl font-black mb-6 ${passed ? 'text-green-600' : 'text-red-500'}`}>
+                        {percentage}%
+                    </div>
+                    
+                    {passed ? (
+                        <div className="animate-fade-in">
+                            <p className="text-xl text-gray-700 mb-8">Wspaniale, <span className="font-bold">{fullName}</span>! Posiadasz ogromną wiedzę o bezpiecznym lesie.</p>
+                            <button 
+                                onClick={() => setStep('certificate')}
+                                className="w-full bg-yellow-500 hover:bg-yellow-600 text-white text-lg font-bold py-4 px-6 rounded-xl shadow-lg transition-transform transform hover:scale-105"
+                            >
+                                Odbierz swój dyplom 🎓
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="animate-fade-in">
+                            <p className="text-lg text-gray-700 mb-8">Niestety, zabrakło Ci odrobiny wiedzy. Aby zdobyć dyplom, potrzebujesz co najmniej 60%.</p>
+                            <button 
+                                onClick={resetQuiz}
+                                className="w-full border-2 border-green-600 text-green-600 hover:bg-green-50 text-lg font-bold py-4 px-6 rounded-xl transition-colors"
+                            >
+                                Spróbuj jeszcze raz 🔄
+                            </button>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* KROK 4: CERTYFIKAT I WYSYŁKA */}
+            {step === 'certificate' && (
+                <div className="max-w-3xl w-full animate-fade-in">
+                    
+                    {/* Właściwy dokument certyfikatu */}
+                    <div className="bg-white p-8 md:p-16 rounded-sm shadow-2xl border-8 border-double border-green-800 relative mb-8">
+                        <div className="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center">
+                            <span className="text-[200px]">🌲</span>
+                        </div>
+                        
+                        <div className="relative z-10 space-y-6">
+                            <h2 className="text-lg font-bold text-gray-400 uppercase tracking-widest mb-10">
+                                Kampania Edukacyjna "Uwaga Kleszcz!"
+                            </h2>
+                            
+                            <div className="py-6">
+                                <h1 className="text-4xl md:text-5xl font-serif text-green-900 font-bold mb-10">
+                                    Dyplom ukończenia kursu o kleszczach
+                                </h1>
+                                <p className="text-gray-600 text-xl mb-4">Niniejszym zaświadcza się, że</p>
+                                <p className="text-3xl md:text-4xl font-black text-gray-800 border-b-2 border-green-300 pb-2 inline-block px-12 italic">
+                                    {fullName}
+                                </p>
+                                <p className="text-gray-700 text-lg mt-10 max-w-xl mx-auto leading-relaxed">
+                                    pomyślnie ukończył(a) test wiedzy z zakresu profilaktyki, występowania oraz zapobiegania zagrożeniom związanym z chorobami odkleszczowymi.
+                                </p>
+                            </div>
+                            
+                            <div className="flex flex-col md:flex-row justify-between items-center md:items-end mt-16 pt-8 border-t border-gray-200 text-sm text-gray-500 font-medium gap-6">
+                                <div className="text-center md:text-left">
+                                    <p className="mb-1">Data wydania:</p>
+                                    <p className="text-gray-800 text-lg">{new Date().toLocaleDateString('pl-PL')}</p>
+                                </div>
+                                <div className="text-5xl bg-yellow-100 p-4 rounded-full shadow-inner">
+                                    🏅
+                                </div>
+                                <div className="text-center md:text-right">
+                                    <p className="mb-1">Wynik testu:</p>
+                                    <p className="text-green-700 text-xl font-bold">{percentage}%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Sekcja wysyłki na e-mail */}
+                    <div className="bg-white p-8 rounded-2xl shadow-md border-t-4 border-blue-500">
+                        <h3 className="text-2xl font-bold text-gray-800 mb-4">Pobierz swój dyplom</h3>
+                        
+                        {!isEmailSent ? (
+                            <form onSubmit={handleSendEmail} className="max-w-md mx-auto space-y-4">
+                                <p className="text-gray-600 mb-4">Podaj swój adres e-mail, a wyślemy Ci dyplom w pliku PDF gotowym do wydruku.</p>
+                                <input 
+                                    type="email" 
+                                    required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="twoj.adres@email.pl" 
+                                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none text-center"
+                                />
+                                <button 
+                                    type="submit"
+                                    disabled={isSending || !email.trim()}
+                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-colors disabled:opacity-50"
+                                >
+                                    {isSending ? "Wysyłanie..." : "Wyślij dyplom na e-mail 📩"}
+                                </button>
+                            </form>
+                        ) : (
+                            <div className="py-6 animate-fade-in">
+                                <div className="text-5xl mb-4">✅</div>
+                                <h3 className="text-2xl font-bold text-green-600 mb-2">Sukces!</h3>
+                                <p className="text-gray-700">Dyplom został wysłany na adres: <strong>{email}</strong>.</p>
+                                <p className="text-sm text-gray-500 mt-2">Sprawdź również folder SPAM, jeśli wiadomość nie pojawi się w ciągu kilku minut.</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="mt-8 text-center print:hidden">
+                        <button 
+                            onClick={resetQuiz}
+                            className="text-sm text-gray-400 hover:text-green-700 transition underline font-medium"
+                        >
+                            Rozwiąż quiz ponownie
+                        </button>
+                    </div>
+
+                </div>
+            )}
         </div>
-    </div>
-);
+    );
+};
 
 // --- GŁÓWNY KOMPONENT ---
 export default function App() {
