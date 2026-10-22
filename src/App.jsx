@@ -646,7 +646,7 @@ export default function App() {
                             />
                             {/* Logo Państwowa Inspekcja Sanitarna */}
                             <img 
-                                src="/sanepid.png" 
+                                src="/Panstwowa_inspekcja_sanitarna.png" 
                                 alt="Państwowa Inspekcja Sanitarna" 
                                 className="h-14 md:h-20 object-contain hover:scale-125 transition-transform duration-300"
                             />
