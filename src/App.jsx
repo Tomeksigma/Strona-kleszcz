@@ -577,7 +577,7 @@ export default function App() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col font-sans text-gray-800 pb-32 md:pb-28">
+        <div className="min-h-screen flex flex-col font-sans text-gray-800">
             {/* Pasek Nawigacyjny */}
             <nav className="bg-white shadow-sm sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -623,44 +623,43 @@ export default function App() {
                     </div>
                 )}
             </nav>
-            {/* Miejsce na renderowany widok */}
+{/* Miejsce na renderowany widok */}
             <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 bg-gray-50">
                 {renderView()}
             </main>
             
-            {/* --- PRZYPIĘTY PASEK NA DOLE (STALE WIDOCZNY) --- */}
-            <div className="fixed bottom-0 left-0 w-full z-50 shadow-[0_-5px_15px_-3px_rgba(0,0,0,0.1)]">
+            {/* --- STANDARDOWA STOPKA (WIDOCZNA PO ZJECHANIU NA DÓŁ) --- */}
+            <div className="w-full shadow-inner mt-auto bg-white">
                 
                 {/* Sekcja patronatów */}
-                <section className="bg-white py-1.5 md:py-2 border-t border-gray-200">
+                <section className="py-4 md:py-6 border-t border-gray-200">
                     <div className="max-w-5xl mx-auto px-4 text-center">
-                        <h3 className="text-gray-400 font-bold uppercase tracking-widest mb-1 text-[10px]">
+                        <h3 className="text-gray-400 font-bold uppercase tracking-widest mb-4 text-xs">
                             Patronaty Honorowe i Partnerzy
                         </h3>
                         <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
                             {/* Logo Lasy Państwowe */}
                             <img 
-                                src="/LogoLP.svg" 
+                                src="/lasy-panstwowe.png" 
                                 alt="Lasy Państwowe" 
                                 className="h-10 md:h-14 object-contain hover:scale-125 transition-transform duration-300"
                             />
                             {/* Logo Państwowa Inspekcja Sanitarna */}
                             <img 
-                                src="/PANSTWOWA-INSPEKCJA-SANIT.webp" 
+                                src="/sanepid.png" 
                                 alt="Państwowa Inspekcja Sanitarna" 
-                                className="h-16 md:h-24 object-contain hover:scale-125 transition-transform duration-300"
+                                className="h-14 md:h-20 object-contain hover:scale-125 transition-transform duration-300"
                             />
                         </div>
                     </div>
                 </section>
 
                 {/* Stopka serwisu */}
-                <footer className="bg-gray-900 text-gray-400 py-1.5 md:py-2 text-center text-[10px]">
-                    &copy; 2026 Kampania Edukacyjna "Uwaga Kleszcz!". Wszelkie prawa zastrzeżone. {/*[cite: 3] */}
+                <footer className="bg-gray-900 text-gray-400 py-3 text-center text-xs">
+                    &copy; 2026 Kampania Edukacyjna "Uwaga Kleszcz!". Wszelkie prawa zastrzeżone.
                 </footer>
             </div>
         </div>
     );
 }
-
            
