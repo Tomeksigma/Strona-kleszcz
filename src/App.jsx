@@ -370,14 +370,14 @@ const QuizView = () => {
 
     // Obliczenia (wynik z 10 pytań)
     const percentage = activeQuestions.length > 0 ? (score / activeQuestions.length) * 100 : 0;
-    const passed = percentage >= 60;
+    const passed = percentage >= 70;
 
     return (
         <div className="flex flex-col items-center justify-center py-12 px-4 text-center animate-fade-in">
             {step === 'intro' && (
                 <div className="bg-white p-10 rounded-2xl shadow-lg max-w-xl w-full border-t-4 border-green-600">
                     <h1 className="text-3xl font-bold text-gray-800 mb-4">Wielki Quiz o Kleszczach</h1>
-                    <p className="text-gray-600 mb-8">Odpowiedz na 10 wylosowanych pytań. Zdobądź minimum 60% (6/10), aby otrzymać imienny certyfikat!</p>
+                    <p className="text-gray-600 mb-8">Odpowiedz na 10 wylosowanych pytań. Zdobądź minimum 70% (7/10), aby otrzymać imienny certyfikat!</p>
                     <form onSubmit={handleStart} className="space-y-5 text-left">
                         <div>
                             <label className="block text-sm font-bold text-gray-700 mb-2">Imię i nazwisko (do certyfikatu)</label>
