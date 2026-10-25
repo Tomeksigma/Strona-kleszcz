@@ -289,7 +289,7 @@ const CompetitionView = () => (
             <div className="text-center">
                 {/* Zmieniono button na link pobierający z zaktualizowanym tekstem */}
                 <a 
-                    href="/REGULAMIN OGÓLNOPOLSKIEGO KONKURSU EDUKACYJNEGO.pdf" 
+                    href="/Regulamin.pdf" 
                     download
                     className="inline-block bg-brand hover:bg-brand-dark text-white font-bold py-3 px-8 rounded-lg shadow-md transition-transform transform hover:scale-105"
                 >
