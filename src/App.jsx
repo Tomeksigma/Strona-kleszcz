@@ -287,9 +287,14 @@ const CompetitionView = () => (
                 <li className="flex items-start gap-3"><div className="w-2 h-2 mt-2 rounded-full bg-brand"></div><p>Termin nadsyłania prac mija <strong>30 czerwca 2026 roku</strong>.</p></li>
             </ul>
             <div className="text-center">
-                <button className="inline-block bg-brand hover:bg-brand-dark text-white font-bold py-3 px-8 rounded-lg shadow-md transition-transform transform hover:scale-105">
-                    Pobierz formularz zgłoszeniowy (PDF)
-                </button>
+                {/* Zmieniono button na link pobierający z zaktualizowanym tekstem */}
+                <a 
+                    href="/public/REGULAMIN OGÓLNOPOLSKIEGO KONKURSU EDUKACYJNEGO.pdf" 
+                    download
+                    className="inline-block bg-brand hover:bg-brand-dark text-white font-bold py-3 px-8 rounded-lg shadow-md transition-transform transform hover:scale-105"
+                >
+                    Pobierz regulamin konkursu (PDF)
+                </a>
             </div>
         </div>
     </div>
@@ -629,17 +634,19 @@ export default function App() {
             </main>
             
             {/* --- PRZYPIĘTY PASEK NA DOLE (STALE WIDOCZNY) --- */}
-            {/* --- PRZYPIĘTY PASEK NA DOLE (STALE WIDOCZNY) --- */}
+           {/* --- PRZYPIĘTY PASEK NA DOLE (STALE WIDOCZNY) --- */}
             <div className="fixed bottom-0 left-0 w-full z-50 shadow-[0_-5px_15px_-3px_rgba(0,0,0,0.1)]">
                 
                 {/* Sekcja patronatów - drastycznie zmniejszone paddingi (py-1.5) */}
                 <section className="bg-white py-1.5 md:py-2 border-t border-gray-200">
-                    <div className="max-w-5xl mx-auto px-4 text-center">
+                    {/* Zwiększono max-w, by pomieścić 8 logotypów */}
+                    <div className="max-w-7xl mx-auto px-4 text-center">
                         {/* Zmniejszony margines dolny (mb-1) i mniejszy tekst */}
                         <h3 className="text-gray-400 font-bold uppercase tracking-widest mb-1 text-[10px]">
                             Patronaty Honorowe i Partnerzy
                         </h3>
-                        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
+                        {/* Zmniejszony gap, aby loga zmieściły się w jednym rzędzie */}
+                        <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8">
                             {/* Logo Lasy Państwowe - skorygowana wielkość (h-8) */}
                             <img 
                                 src="/LogoLP.svg"
@@ -652,16 +659,25 @@ export default function App() {
                                 alt="Państwowa Inspekcja Sanitarna" 
                                 className="h-12 md:h-16 object-contain hover:scale-125 transition-transform duration-300"
                             />
+                            
+                            {/* Nowe logotypy z obrazka */}
+                            <img src="/Fundusze Europejskie.png" alt="Fundusze Europejskie" className="h-8 md:h-10 object-contain hover:scale-125 transition-transform duration-300" />
+                            <img src="/Rzeczpospolita Polska.png" alt="Rzeczpospolita Polska" className="h-8 md:h-10 object-contain hover:scale-125 transition-transform duration-300" />
+                            <img src="/NCBR.png" alt="NCBR" className="h-8 md:h-10 object-contain hover:scale-125 transition-transform duration-300" />
+                            <img src="/UE.png" alt="Unia Europejska" className="h-8 md:h-10 object-contain hover:scale-125 transition-transform duration-300" />
+                            <img src="/Uczelnie Przyszłości.png" alt="Uczelnie Przyszłości" className="h-8 md:h-10 object-contain hover:scale-125 transition-transform duration-300" />
+                            <img src="/Warszawski_Uniwersytet_Medyczny.png" alt="Warszawski Uniwersytet Medyczny" className="h-8 md:h-10 object-contain hover:scale-125 transition-transform duration-300" />
                         </div>
                     </div>
                 </section>
 
                 {/* Stopka serwisu - minimalnie chudsza */}
                 <footer className="bg-gray-900 text-gray-400 py-1.5 md:py-2 text-center text-[10px]">
-                    &copy; 2026 Kampania Edukacyjna "Uwaga Kleszcz!". Wszelkie prawa zastrzeżone.
+                    &copy; 2026 Kampania Edukacyjna "Uwaga Kleszcz!". Wszelkie prawa zastrzeżone. {/*[cite: 4] */}
                 </footer>
             </div>
         </div>
+               
     );
 }
 
