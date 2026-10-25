@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { client, urlFor } from './sanity';
-import emailjs from '@emailjs/browser';
+
 
 // --- IKONY ---
 const MenuIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>;
@@ -305,9 +305,7 @@ const QuizView = () => {
     const [step, setStep] = useState('intro');
     const [fullName, setFullName] = useState('');
     const [consent, setConsent] = useState(false);
-    const [email, setEmail] = useState('');
-    const [isEmailSent, setIsEmailSent] = useState(false);
-    const [isSending, setIsSending] = useState(false);
+
     
     // Nowe stany do obsługi wylosowanych pytań
     const [activeQuestions, setActiveQuestions] = useState([]);
@@ -365,41 +363,10 @@ const QuizView = () => {
         setConsent(false);
         setCurrentQuestion(0);
         setScore(0);
-        setEmail('');
-        setIsEmailSent(false);
         setActiveQuestions([]);
     };
 
-    const handleSendEmail = (e) => {
-    e.preventDefault();
-    // Zakładając, że masz już stany 'email' i 'name'
-    if (email.trim()) {
-        // Obiekty z danymi, które trafią do szablonu EmailJS
-        const templateParams = {
-            to_email: email,
-            to_name: fullName,
-            score: percentage
-            // UWAGA: W darmowej wersji EmailJS ciężko przesłać wygenerowany plik PDF jako załącznik.
-            // Najlepszą praktyką jest wysłanie maila z gratulacjami i wynikiem, 
-            // a sam dyplom użytkownik pobiera bezpośrednio ze strony.
-        };
-
-        emailjs.send(
-            'service_x527xxk', 
-            'template_1dhd22e', 
-            templateParams, 
-            'VQlvNnDxoQV6KPiuU'
-        )
-        .then((response) => {
-            console.log('Sukces!', response.status, response.text);
-            alert('Mail z certyfikatem (lub potwierdzeniem) został wysłany!');
-        })
-        .catch((error) => {
-            console.error('Błąd wysyłania:', error);
-            alert('Wystąpił problem z wysłaniem maila.');
-        });
-    }
-};
+   
 
     // Obliczenia (wynik z 10 pytań)
     const percentage = activeQuestions.length > 0 ? (score / activeQuestions.length) * 100 : 0;
@@ -500,27 +467,24 @@ const QuizView = () => {
                 </div>
             )}
 
-            {/* KROK 4: CERTYFIKAT I WYSYŁKA */}
+                    {/* KROK 4: CERTYFIKAT */}
             {step === 'certificate' && (
                 <div className="max-w-4xl w-full animate-fade-in mx-auto">
                     
                     {/* Właściwy dokument certyfikatu oparty na nowym zdjęciu */}
                     <div className="relative w-full shadow-2xl mb-8 bg-white print:shadow-none">
-                        {/* Obraz tła certyfikatu */}
                         <img 
                             src="/Certyfikat.jpg" 
                             alt="Certyfikat Ukończenia" 
                             className="w-full h-auto rounded-sm block"
                         />
                         
-                        {/* Kontener na Imię i nazwisko - przesunięty wyżej nad linię */}
                         <div className="absolute top-[58%] md:top-[59%] left-0 w-full text-center px-4">
                             <p className="text-2xl md:text-4xl lg:text-5xl font-serif font-bold text-gray-800 italic">
                                 {fullName}
                             </p>
                         </div>
-
-                        {/* Kontener na Datę - podniesiony wyżej nad linię */}
+                        
                         <div className="absolute bottom-[14%] left-[18%] md:bottom-[15%] md:left-[17%]">
                             <p className="text-sm md:text-xl lg:text-2xl font-medium text-gray-800">
                                 {new Date().toLocaleDateString('pl-PL')}
@@ -528,40 +492,15 @@ const QuizView = () => {
                         </div>
                     </div>
 
-                    {/* Sekcja wysyłki na e-mail (pozostaje bez zmian) */}
-                    <div className="bg-white p-8 rounded-2xl shadow-md border-t-4 border-blue-500 print:hidden">
-                        <h3 className="text-2xl font-bold text-gray-800 mb-4">Pobierz swój dyplom</h3>
-                        
-                        {!isEmailSent ? (
-                            <form onSubmit={handleSendEmail} className="max-w-md mx-auto space-y-4">
-                                <p className="text-gray-600 mb-4">Podaj swój adres e-mail, a wyślemy Ci dyplom w pliku PDF gotowym do wydruku.</p>
-                                <input 
-                                    type="email" 
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="twoj.adres@email.pl" 
-                                    className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none text-center"
-                                />
-                                <button 
-                                    type="submit"
-                                    disabled={isSending || !email.trim()}
-                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-colors disabled:opacity-50"
-                                >
-                                    {isSending ? "Wysyłanie..." : "Wyślij dyplom na e-mail 📩"}
-                                </button>
-                            </form>
-                        ) : (
-                            <div className="py-6 animate-fade-in">
-                                <div className="text-5xl mb-4">✅</div>
-                                <h3 className="text-2xl font-bold text-green-600 mb-2">Sukces!</h3>
-                                <p className="text-gray-700">Dyplom został wysłany na adres: <strong>{email}</strong>.</p>
-                                <p className="text-sm text-gray-500 mt-2">Sprawdź również folder SPAM, jeśli wiadomość nie pojawi się w ciągu kilku minut.</p>
-                            </div>
-                        )}
-                    </div>
+                    <div className="mt-8 text-center print:hidden flex flex-col items-center gap-4">
+                        {/* Zastępczy przycisk pozwalający zapisać PDF bezpośrednio z przeglądarki */}
+                        <button 
+                            onClick={() => window.print()}
+                            className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-xl shadow-md transition-transform transform hover:scale-105"
+                        >
+                            Zapisz / Wydrukuj dyplom 🖨️
+                        </button>
 
-                    <div className="mt-8 text-center print:hidden">
                         <button 
                             onClick={resetQuiz}
                             className="text-sm text-gray-400 hover:text-green-700 transition underline font-medium"
@@ -569,7 +508,6 @@ const QuizView = () => {
                             Rozwiąż quiz ponownie
                         </button>
                     </div>
-
                 </div>
             )}
         </div>
