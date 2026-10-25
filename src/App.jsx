@@ -492,15 +492,15 @@ const QuizView = () => {
                             className="w-full h-auto rounded-sm block"
                         />
                         
-                        {/* Kontener na Imię i nazwisko - pozycjonowany absolutnie nad linią */}
-                        <div className="absolute top-[63%] left-0 w-full text-center px-4">
+                        {/* Kontener na Imię i nazwisko - przesunięty niżej (z 63% na ok. 69%) */}
+                        <div className="absolute top-[69%] md:top-[70%] left-0 w-full text-center px-4">
                             <p className="text-2xl md:text-4xl lg:text-5xl font-serif font-bold text-gray-800 italic">
                                 {fullName}
                             </p>
                         </div>
-                        
-                        {/* Kontener na Datę - pozycjonowany absolutnie w lewym dolnym rogu */}
-                        <div className="absolute bottom-[16%] left-[15%] md:bottom-[16.5%] md:left-[14.5%]">
+
+                        {/* Kontener na Datę - obniżony i dopasowany do linii Data: */}
+                        <div className="absolute bottom-[11%] left-[18%] md:bottom-[11.5%] md:left-[17%]">
                             <p className="text-sm md:text-xl lg:text-2xl font-medium text-gray-800">
                                 {new Date().toLocaleDateString('pl-PL')}
                             </p>
