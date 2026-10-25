@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { client, urlFor } from './sanity';
+import emailjs from '@emailjs/browser';
 
 // --- IKONY ---
 const MenuIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>;
@@ -370,15 +371,35 @@ const QuizView = () => {
     };
 
     const handleSendEmail = (e) => {
-        e.preventDefault();
-        if (email.trim()) {
-            setIsSending(true);
-            setTimeout(() => {
-                setIsSending(false);
-                setIsEmailSent(true);
-            }, 1500);
-        }
-    };
+    e.preventDefault();
+    // Zakładając, że masz już stany 'email' i 'name'
+    if (email.trim()) {
+        // Obiekty z danymi, które trafią do szablonu EmailJS
+        const templateParams = {
+            to_email: email,
+            to_name: fullName,
+            score: percentage
+            // UWAGA: W darmowej wersji EmailJS ciężko przesłać wygenerowany plik PDF jako załącznik.
+            // Najlepszą praktyką jest wysłanie maila z gratulacjami i wynikiem, 
+            // a sam dyplom użytkownik pobiera bezpośrednio ze strony.
+        };
+
+        emailjs.send(
+            'service_x527xxk', 
+            'template_1dhd22e', 
+            templateParams, 
+            'VQlvNnDxoQV6KPiuU'
+        )
+        .then((response) => {
+            console.log('Sukces!', response.status, response.text);
+            alert('Mail z certyfikatem (lub potwierdzeniem) został wysłany!');
+        })
+        .catch((error) => {
+            console.error('Błąd wysyłania:', error);
+            alert('Wystąpił problem z wysłaniem maila.');
+        });
+    }
+};
 
     // Obliczenia (wynik z 10 pytań)
     const percentage = activeQuestions.length > 0 ? (score / activeQuestions.length) * 100 : 0;
