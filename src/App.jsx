@@ -285,7 +285,7 @@ const CompetitionView = () => (
             <ul className="space-y-4 text-gray-700 mb-8">
                 <li className="flex items-start gap-3"><div className="w-2 h-2 mt-2 rounded-full bg-brand"></div><p>Konkurs skierowany jest do uczniów szkół podstawowych.</p></li>
                 <li className="flex items-start gap-3"><div className="w-2 h-2 mt-2 rounded-full bg-brand"></div><p>Praca musi być wykonana samodzielnie dowolną techniką plastyczną (format A4).</p></li>
-                <li className="flex items-start gap-3"><div className="w-2 h-2 mt-2 rounded-full bg-brand"></div><p>Termin nadsyłania prac mija <strong>2027 rok</strong>.</p></li>
+                <li className="flex items-start gap-3"><div className="w-2 h-2 mt-2 rounded-full bg-brand"></div><p>Termin odsyłania prac od 01.01.2027 do <strong>31.01.2027</strong>.</p></li>
             </ul>
             <div className="text-center">
                 {/* Zmieniono button na link pobierający z zaktualizowanym tekstem */}
