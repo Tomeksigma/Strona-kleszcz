@@ -479,46 +479,41 @@ const QuizView = () => {
                 </div>
             )}
 
+            {/* KROK 4: CERTYFIKAT I WYSYŁKA */}
             {step === 'certificate' && (
-                <div className="max-w-3xl w-full animate-fade-in">
-                    <div className="bg-white p-8 md:p-16 rounded-sm shadow-2xl border-8 border-double border-green-800 relative mb-8">
-                        <div className="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center">
-                            <span className="text-[200px]">🌲</span>
+                <div className="max-w-4xl w-full animate-fade-in mx-auto">
+                    
+                    {/* Właściwy dokument certyfikatu oparty na nowym zdjęciu */}
+                    <div className="relative w-full shadow-2xl mb-8 bg-white print:shadow-none">
+                        {/* Obraz tła certyfikatu */}
+                        <img 
+                            src="/Certyfikat.jpg" 
+                            alt="Certyfikat Ukończenia" 
+                            className="w-full h-auto rounded-sm block"
+                        />
+                        
+                        {/* Kontener na Imię i nazwisko - pozycjonowany absolutnie nad linią */}
+                        <div className="absolute top-[63%] left-0 w-full text-center px-4">
+                            <p className="text-2xl md:text-4xl lg:text-5xl font-serif font-bold text-gray-800 italic">
+                                {fullName}
+                            </p>
                         </div>
-                        <div className="relative z-10 space-y-6">
-                            <h2 className="text-lg font-bold text-gray-400 uppercase tracking-widest mb-10">
-                                Kampania Edukacyjna "Uwaga Kleszcz!"
-                            </h2>
-                            <div className="py-6">
-                                <h1 className="text-4xl md:text-5xl font-serif text-green-900 font-bold mb-10">
-                                    Dyplom eksperta leśnego
-                                </h1>
-                                <p className="text-gray-600 text-xl mb-4">Niniejszym zaświadcza się, że</p>
-                                <p className="text-3xl md:text-4xl font-black text-gray-800 border-b-2 border-green-300 pb-2 inline-block px-12 italic">
-                                    {fullName}
-                                </p>
-                                <p className="text-gray-700 text-lg mt-10 max-w-xl mx-auto leading-relaxed">
-                                    pomyślnie ukończył(a) test wiedzy z zakresu profilaktyki, występowania oraz zapobiegania zagrożeniom związanym z chorobami odkleszczowymi z wynikiem {score}/10.
-                                </p>
-                            </div>
-                            <div className="flex flex-col md:flex-row justify-between items-center md:items-end mt-16 pt-8 border-t border-gray-200 text-sm text-gray-500 font-medium gap-6">
-                                <div className="text-center md:text-left">
-                                    <p className="mb-1">Data wydania:</p>
-                                    <p className="text-gray-800 text-lg">{new Date().toLocaleDateString('pl-PL')}</p>
-                                </div>
-                                <div className="text-5xl bg-yellow-100 p-4 rounded-full shadow-inner">🏅</div>
-                                <div className="text-center md:text-right">
-                                    <p className="mb-1">Wynik testu:</p>
-                                    <p className="text-green-700 text-xl font-bold">{percentage}%</p>
-                                </div>
-                            </div>
+                        
+                        {/* Kontener na Datę - pozycjonowany absolutnie w lewym dolnym rogu */}
+                        <div className="absolute bottom-[16%] left-[15%] md:bottom-[16.5%] md:left-[14.5%]">
+                            <p className="text-sm md:text-xl lg:text-2xl font-medium text-gray-800">
+                                {new Date().toLocaleDateString('pl-PL')}
+                            </p>
                         </div>
                     </div>
 
+                    {/* Sekcja wysyłki na e-mail (pozostaje bez zmian) */}
                     <div className="bg-white p-8 rounded-2xl shadow-md border-t-4 border-blue-500 print:hidden">
                         <h3 className="text-2xl font-bold text-gray-800 mb-4">Pobierz swój dyplom</h3>
+                        
                         {!isEmailSent ? (
                             <form onSubmit={handleSendEmail} className="max-w-md mx-auto space-y-4">
+                                <p className="text-gray-600 mb-4">Podaj swój adres e-mail, a wyślemy Ci dyplom w pliku PDF gotowym do wydruku.</p>
                                 <input 
                                     type="email" 
                                     required
@@ -538,14 +533,22 @@ const QuizView = () => {
                         ) : (
                             <div className="py-6 animate-fade-in">
                                 <div className="text-5xl mb-4">✅</div>
-                                <h3 className="text-2xl font-bold text-green-600 mb-2">Wysłano!</h3>
-                                <p className="text-gray-700">Sprawdź skrzynkę odbiorczą (i SPAM).</p>
+                                <h3 className="text-2xl font-bold text-green-600 mb-2">Sukces!</h3>
+                                <p className="text-gray-700">Dyplom został wysłany na adres: <strong>{email}</strong>.</p>
+                                <p className="text-sm text-gray-500 mt-2">Sprawdź również folder SPAM, jeśli wiadomość nie pojawi się w ciągu kilku minut.</p>
                             </div>
                         )}
-                        <button onClick={resetQuiz} className="mt-8 text-sm text-gray-400 hover:text-green-700 transition underline font-medium">
+                    </div>
+
+                    <div className="mt-8 text-center print:hidden">
+                        <button 
+                            onClick={resetQuiz}
+                            className="text-sm text-gray-400 hover:text-green-700 transition underline font-medium"
+                        >
                             Rozwiąż quiz ponownie
                         </button>
                     </div>
+
                 </div>
             )}
         </div>
