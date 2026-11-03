@@ -537,7 +537,7 @@ export default function App() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col font-sans text-gray-800 pb-32 md:pb-28">
+        <div className="min-h-screen flex flex-col font-sans text-gray-800">
             {/* Pasek Nawigacyjny */}
             {/* BANER TYMCZASOWY */}
         <div className="bg-yellow-400 text-yellow-900 text-center py-2 px-4 text-xs font-bold tracking-wide">
@@ -593,33 +593,18 @@ export default function App() {
             </main>
             
             {/* --- PRZYPIĘTY PASEK NA DOLE (STALE WIDOCZNY) --- */}
-           {/* --- PRZYPIĘTY PASEK NA DOLE (STALE WIDOCZNY) --- */}
-            <div className="fixed bottom-0 left-0 w-full z-50 shadow-[0_-5px_15px_-3px_rgba(0,0,0,0.1)]">
+           {/* --- PASEK NA DOLE (WIDOCZNY PO PRZEWINIĘCIU) --- */}
+            <div className="w-full mt-auto border-t border-gray-200">
                 
-                {/* Sekcja patronatów - drastycznie zmniejszone paddingi (py-1.5) */}
-                <section className="bg-white py-1.5 md:py-2 border-t border-gray-200">
-                    {/* Zwiększono max-w, by pomieścić 8 logotypów */}
+                {/* Sekcja patronatów */}
+                <section className="bg-white py-1.5 md:py-2">
                     <div className="max-w-7xl mx-auto px-4 text-center">
-                        {/* Zmniejszony margines dolny (mb-1) i mniejszy tekst */}
                         <h3 className="text-gray-400 font-bold uppercase tracking-widest mb-1 text-[10px]">
                             Patronaty Honorowe i Partnerzy
                         </h3>
-                        {/* Zmniejszony gap, aby loga zmieściły się w jednym rzędzie */}
                         <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8">
-                            {/* Logo Lasy Państwowe - skorygowana wielkość (h-8) */}
-                            <img 
-                                src="/LogoLP.svg"
-                                alt="Lasy Państwowe" 
-                                className="h-8 md:h-10 object-contain hover:scale-125 transition-transform duration-300"
-                            />
-                            {/* Logo Państwowa Inspekcja Sanitarna - skorygowana wielkość (h-12) */}
-                            <img 
-                                src="/PANSTWOWA-INSPEKCJA-SANIT.webp" 
-                                alt="Państwowa Inspekcja Sanitarna" 
-                                className="h-12 md:h-16 object-contain hover:scale-125 transition-transform duration-300"
-                            />
-                            
-                            {/* Nowe logotypy z obrazka */}
+                            <img src="/LogoLP.svg" alt="Lasy Państwowe" className="h-8 md:h-10 object-contain hover:scale-125 transition-transform duration-300" />
+                            <img src="/PANSTWOWA-INSPEKCJA-SANIT.webp" alt="Państwowa Inspekcja Sanitarna" className="h-12 md:h-16 object-contain hover:scale-125 transition-transform duration-300" />
                             <img src="/Fundusze Europejskie.png" alt="Fundusze Europejskie" className="h-8 md:h-10 object-contain hover:scale-125 transition-transform duration-300" />
                             <img src="/Rzeczpospolita Polska.png" alt="Rzeczpospolita Polska" className="h-8 md:h-10 object-contain hover:scale-125 transition-transform duration-300" />
                             <img src="/NCBR.png" alt="NCBR" className="h-8 md:h-10 object-contain hover:scale-125 transition-transform duration-300" />
@@ -629,6 +614,7 @@ export default function App() {
                         </div>
                     </div>
                 </section>
+                
                 <footer className="bg-gray-900 text-gray-400 py-4 text-center text-[10px] md:text-xs">
                     <div className="max-w-7xl mx-auto px-4 flex flex-col gap-3">
                         <div className="flex flex-wrap justify-center gap-4 text-gray-300 font-medium">
