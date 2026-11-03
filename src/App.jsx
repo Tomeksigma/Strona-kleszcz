@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { client, urlFor } from './sanity';
 
-
 // --- IKONY ---
 const MenuIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>;
 const CloseIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>;
@@ -37,9 +36,7 @@ const SensitiveImage = ({ src, alt }) => {
 
 // --- WIDOKI ---
 const HomeView = ({ changeView }) => {
-    // Stan na artykuły z Sanity
     const [articles, setArticles] = useState([]);
-    // Nowy stan przechowujący aktualnie kliknięty artykuł (null oznacza, że żaden nie jest otwarty)
     const [selectedArticle, setSelectedArticle] = useState(null);
 
     useEffect(() => {
@@ -48,7 +45,6 @@ const HomeView = ({ changeView }) => {
             .catch(console.error);
     }, []);
 
-    // Blokowanie przewijania strony pod spodem, gdy okienko jest otwarte
     useEffect(() => {
         if (selectedArticle) {
             document.body.style.overflow = 'hidden';
@@ -58,19 +54,34 @@ const HomeView = ({ changeView }) => {
     }, [selectedArticle]);
 
     return (
-        <div className="space-y-12 animate-fade-in relative">
-            <div className="bg-brand text-white rounded-3xl p-8 md:p-12 shadow-xl flex flex-col md:flex-row items-center gap-8">
-                <div className="md:w-1/2 space-y-6">
-                    <span className="bg-brand-accent text-brand-dark px-3 py-1 rounded-full text-sm font-bold tracking-wide">KAMPANIA 2026</span>
-                    <h1 className="text-4xl md:text-5xl font-bold leading-tight">Zrozumieć kleszcze, chronić zdrowie.</h1>
-                    <p className="text-brand-light text-lg">Edukujemy uczniów, wspieramy nauczycieli i zwiększamy świadomość o chorobach odkleszczowych w całej Polsce.</p>
-                    <div className="flex flex-wrap gap-4 pt-2">
-                        <button onClick={() => changeView('knowledge')} className="bg-white text-brand-dark px-6 py-3 rounded-full font-bold hover:bg-gray-100 transition shadow-lg">Baza Wiedzy</button>
-                        <button onClick={() => changeView('competition')} className="bg-transparent border-2 border-white px-6 py-3 rounded-full font-bold hover:bg-white/10 transition">Weź udział w konkursie</button>
+        <div className="space-y-12 animate-fade-in relative pb-12">
+            {/* Nowa Główna sekcja (Hero) */}
+            <div className="relative w-full min-h-[450px] flex flex-col justify-center px-6 md:px-12 py-16 bg-[#122217] overflow-hidden rounded-3xl shadow-xl">
+                <div className="absolute inset-0 bg-[url('/Las_main.jpg')] bg-cover bg-center opacity-40 mix-blend-overlay"></div>
+                <div className="relative z-10 max-w-3xl">
+                    <span className="text-[#d48b48] font-bold tracking-widest text-xs uppercase mb-4 block">
+                        Projekt edukacyjny 2026
+                    </span>
+                    <h1 className="text-4xl md:text-5xl font-serif font-bold text-white leading-tight mb-4">
+                        Zauważ ryzyko, zanim kleszcz zauważy Ciebie
+                    </h1>
+                    <p className="text-lg md:text-xl text-gray-200 italic font-serif mb-8">
+                        Nie odkładaj – Działaj! Edukujemy uczniów i wspieramy nauczycieli w całej Polsce.
+                    </p>
+                    <div className="flex flex-wrap gap-4">
+                        <button 
+                            onClick={() => changeView('education')} 
+                            className="bg-[#EFA75D] hover:bg-[#d98b48] text-gray-900 px-8 py-3 rounded-full font-bold transition shadow-lg"
+                        >
+                            Wejdź do Strefy Edukacji
+                        </button>
+                        <button 
+                            onClick={() => changeView('competition')} 
+                            className="bg-transparent border border-gray-400 text-gray-200 px-8 py-3 rounded-full font-bold hover:bg-white/10 hover:border-white transition"
+                        >
+                            Konkurs na mural
+                        </button>
                     </div>
-                </div>
-                <div className="md:w-1/2">
-                    <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800" alt="Las" className="rounded-2xl shadow-2xl object-cover h-64 w-full" />
                 </div>
             </div>
 
@@ -81,7 +92,6 @@ const HomeView = ({ changeView }) => {
                         articles.map((article) => (
                             <div 
                                 key={article._id} 
-                                // Dodano zdarzenie onClick i kursor wskazujący na klikalność
                                 onClick={() => setSelectedArticle(article)}
                                 className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 cursor-pointer flex flex-col transform hover:-translate-y-1"
                             >
@@ -107,15 +117,38 @@ const HomeView = ({ changeView }) => {
                 </div>
             </section>
 
+            {/* Nowa Siatka odnośników na dole pierwszej strony (bez dodawania pustych podstron) */}
+            <section className="mt-16 pt-8 border-t border-gray-200">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Odkryj zasoby projektu</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[
+                        { id: 'knowledge', title: 'Baza Wiedzy', desc: 'Najważniejsze informacje o kleszczach i profilaktyce.' },
+                        { id: 'education', title: 'Strefa Edukacji', desc: 'Materiały, komiksy i plakaty dla uczniów.' },
+                        { id: 'teachers', title: 'Dla nauczycieli', desc: 'Konspekty i interaktywne scenariusze lekcji.' },
+                        { id: 'competition', title: 'Konkurs', desc: 'Regulamin i zasady zgłoszeń do konkursu.' },
+                        { id: 'quiz', title: 'Wielki Quiz', desc: 'Sprawdź swoją wiedzę i zdobądź certyfikat.' }
+                    ].map((item) => (
+                        <div 
+                            key={item.id} 
+                            onClick={() => changeView(item.id)}
+                            className="bg-white rounded-2xl p-8 shadow-sm cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-gray-100"
+                        >
+                            <h3 className="text-2xl font-bold font-serif text-[#143B2A] mb-2">{item.title}</h3>
+                            <p className="text-gray-500 text-sm">{item.desc}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
             {/* --- WYSKAKUJĄCE OKIENKO (MODAL) --- */}
             {selectedArticle && (
                 <div 
                     className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-sm animate-fade-in"
-                    onClick={() => setSelectedArticle(null)} // Zamknięcie po kliknięciu w ciemne tło
+                    onClick={() => setSelectedArticle(null)}
                 >
                     <div 
                         className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto relative flex flex-col"
-                        onClick={(e) => e.stopPropagation()} // Zapobiega zamknięciu, gdy klikniesz w sam tekst
+                        onClick={(e) => e.stopPropagation()}
                     >
                         {selectedArticle.mainImage && (
                             <div className="relative w-full h-64 sm:h-80 shrink-0">
@@ -124,7 +157,6 @@ const HomeView = ({ changeView }) => {
                                     alt={selectedArticle.title}
                                     className="w-full h-full object-cover rounded-t-2xl"
                                 />
-                                {/* Przycisk zamknięcia nałożony na zdjęcie */}
                                 <button 
                                     onClick={() => setSelectedArticle(null)}
                                     className="absolute top-4 right-4 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors duration-300"
@@ -133,7 +165,6 @@ const HomeView = ({ changeView }) => {
                                 </button>
                             </div>
                         )}
-                        
                         <div className="p-8 sm:p-10">
                             {!selectedArticle.mainImage && (
                                 <div className="flex justify-end mb-4">
@@ -145,7 +176,6 @@ const HomeView = ({ changeView }) => {
                             <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-6 leading-tight">
                                 {selectedArticle.title}
                             </h2>
-                            {/* whitespace-pre-wrap zapewnia, że akapity i entery z Sanity będą respektowane */}
                             <div className="text-gray-700 leading-relaxed whitespace-pre-wrap text-lg">
                                 {selectedArticle.content}
                             </div>
@@ -156,19 +186,16 @@ const HomeView = ({ changeView }) => {
         </div>
     );
 };
+
 const KnowledgeView = () => {
-    // Stan przechowujący nasze dane z Sanity
     const [knowledgeData, setKnowledgeData] = useState(null);
 
-    // Pobieranie danych przy załadowaniu zakładki
     useEffect(() => {
-        // Zauważ [0] na końcu - pobieramy pierwszy i jedyny dokument tego typu!
         client.fetch('*[_type == "knowledgeBase"][0]') 
             .then((data) => setKnowledgeData(data))
             .catch(console.error);
     }, []);
 
-    // Pokazujemy leśny ekran ładowania, dopóki dane nie spłyną z chmury
     if (!knowledgeData) {
         return (
             <div className="text-center py-20 animate-fade-in">
@@ -203,7 +230,6 @@ const KnowledgeView = () => {
                 <div className="space-y-6">
                     <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
                         <h3 className="font-bold mb-3 text-gray-800">{knowledgeData.sensitiveImageTitle}</h3>
-                        {/* Bezpieczne renderowanie zdjęcia z rozmyciem */}
                         {knowledgeData.sensitiveImage && (
                             <SensitiveImage 
                                 src={urlFor(knowledgeData.sensitiveImage).url()} 
@@ -217,7 +243,6 @@ const KnowledgeView = () => {
             <div className="bg-brand-light p-8 rounded-2xl mt-12">
                 <h2 className="text-2xl font-bold text-brand-dark mb-4">{knowledgeData.prophylaxisTitle}</h2>
                 <ul className="space-y-4">
-                    {/* Dynamiczne mapowanie listy z Sanity */}
                     {knowledgeData.prophylaxisList && knowledgeData.prophylaxisList.map((rule, index) => (
                         <li key={index} className="flex items-start gap-3">
                             <div className="w-2 h-2 mt-2 rounded-full bg-brand"></div>
@@ -230,87 +255,94 @@ const KnowledgeView = () => {
     );
 };
 
+// Nowy wyodrębniony widok edukacji dla Uczniów
 const EducationView = () => (
-    <div className="space-y-12 animate-fade-in">
-        <div className="text-center max-w-2xl mx-auto mb-8">
-            <h1 className="text-4xl font-bold text-gray-800 mb-4">Strefa Edukacji</h1>
-            <p className="text-gray-600">Darmowe materiały do pobrania dla szkół. Wybierz odpowiednią sekcję.</p>
+    <div className="space-y-8 animate-fade-in max-w-4xl mx-auto">
+        <div className="text-center mb-8">
+            <h1 className="text-4xl font-serif font-bold text-[#143B2A] mb-4">Strefa Edukacji (Dla Uczniów)</h1>
+            <p className="text-gray-600">Darmowe materiały do pobrania przygotowane specjalnie dla Ciebie.</p>
         </div>
-        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8 text-blue-900 text-sm max-w-4xl mx-auto shadow-sm">
-        Materiały edukacyjne udostępnione w serwisie »Uwaga Kleszcz!« można bezpłatnie pobierać, drukować i wykorzystywać do celów edukacyjnych i niekomercyjnych, w szczególności podczas zajęć szkolnych, warsztatów i działań profilaktycznych. Przy dalszym udostępnianiu materiałów należy zachować wskazane oznaczenia autorstwa, źródeł i warunków licencji. Materiały pochodzące od podmiotów trzecich mogą podlegać odrębnym warunkom wykorzystania.
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8 text-blue-900 text-sm shadow-sm">
+            Materiały edukacyjne udostępnione w serwisie »Uwaga Kleszcz!« można bezpłatnie pobierać, drukować i wykorzystywać do celów edukacyjnych.
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white border-t-4 border-blue-500 rounded-xl p-8 shadow-sm">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">Dla Uczniów</h2>
-                <p className="text-gray-600 mb-6">Materiały napisane prostym językiem, kolorowe grafiki i quizy, które pomogą zrozumieć zagrożenie w przyjazny sposób.</p>
-                <ul className="space-y-3 mb-6">
-                    <li className="flex items-center justify-between p-3 bg-gray-50 rounded">
-                        <span>Komiks: "Przygody w lesie" (PDF)</span>
-                        <button className="text-brand hover:text-brand-dark"><DownloadIcon /></button>
-                    </li>
-                    <li className="flex items-center justify-between p-3 bg-gray-50 rounded">
-                        <span>Plakat do powieszenia w pokoju</span>
-                        <button className="text-brand hover:text-brand-dark"><DownloadIcon /></button>
-                    </li>
-                </ul>
-            </div>
-
-            <div className="bg-white border-t-4 border-brand rounded-xl p-8 shadow-sm">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">Dla Nauczycieli</h2>
-                <p className="text-gray-600 mb-6">Kompleksowe konspekty lekcji, scenariusze warsztatów oraz szczegółowe dane naukowe oparte na wytycznych sanepidu.</p>
-                <ul className="space-y-3 mb-6">
-                    <li className="flex items-center justify-between p-3 bg-gray-50 rounded">
-                        <span>Scenariusz lekcji: Biologia (45 min)</span>
-                        <button className="text-brand hover:text-brand-dark"><DownloadIcon /></button>
-                    </li>
-                    <li className="flex items-center justify-between p-3 bg-gray-50 rounded">
-                        <span>Prezentacja multimedialna (.pptx)</span>
-                        <button className="text-brand hover:text-brand-dark"><DownloadIcon /></button>
-                    </li>
-                </ul>
-            </div>
+        <div className="bg-white border-t-4 border-[#EFA75D] rounded-xl p-8 shadow-sm">
+            <p className="text-gray-600 mb-6">Materiały napisane prostym językiem, kolorowe grafiki i quizy, które pomogą zrozumieć zagrożenie w przyjazny sposób.</p>
+            <ul className="space-y-3 mb-6">
+                <li className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
+                    <span className="font-medium text-[#143B2A]">Komiks: "Przygody w lesie" (PDF)</span>
+                    <button className="text-[#EFA75D] hover:text-[#d98b48]"><DownloadIcon /></button>
+                </li>
+                <li className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
+                    <span className="font-medium text-[#143B2A]">Plakat do powieszenia w pokoju</span>
+                    <button className="text-[#EFA75D] hover:text-[#d98b48]"><DownloadIcon /></button>
+                </li>
+            </ul>
         </div>
     </div>
 );
 
+// Nowy wyodrębniony widok edukacji dla Nauczycieli
+const TeachersView = () => (
+    <div className="space-y-8 animate-fade-in max-w-4xl mx-auto">
+        <div className="text-center mb-8">
+            <h1 className="text-4xl font-serif font-bold text-[#143B2A] mb-4">Dla Nauczycieli</h1>
+            <p className="text-gray-600">Dwie interaktywne lekcje, konspekty i szczegółowe dane naukowe.</p>
+        </div>
+        <div className="bg-white border-t-4 border-[#143B2A] rounded-xl p-8 shadow-sm">
+            <p className="text-gray-600 mb-6">Kompleksowe konspekty lekcji, scenariusze warsztatów oraz szczegółowe dane naukowe oparte na wytycznych sanepidu.</p>
+            <ul className="space-y-3 mb-6">
+                <li className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
+                    <span className="font-medium text-[#143B2A]">Scenariusz lekcji: Biologia (45 min)</span>
+                    <button className="text-[#143B2A] hover:text-green-900"><DownloadIcon /></button>
+                </li>
+                <li className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-100">
+                    <span className="font-medium text-[#143B2A]">Prezentacja multimedialna (.pptx)</span>
+                    <button className="text-[#143B2A] hover:text-green-900"><DownloadIcon /></button>
+                </li>
+            </ul>
+        </div>
+    </div>
+);
+
+// Zaktualizowany widok Konkursu z nowym nagłówkiem
 const CompetitionView = () => (
     <div className="space-y-8 animate-fade-in">
-        <div className="bg-brand-dark text-white rounded-2xl p-8 md:p-12 text-center shadow-lg">
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">
-                Konkurs Edukacyjny "Zauważ ryzyko, zanim kleszcz zauważy Ciebie – Nie odkładaj – Działaj!"
+        <div className="bg-[#0F291E] text-white rounded-3xl p-8 md:p-16 mb-8 text-center shadow-lg">
+            <span className="text-[#d48b48] font-bold tracking-widest text-xs uppercase mb-4 block">OGÓLNOPOLSKI KONKURS EDUKACYJNY</span>
+            <h1 className="text-3xl md:text-5xl font-serif font-bold mb-6">
+                Konkurs na projekt muralu
             </h1>
-            <div className="bg-white/10 p-6 rounded-xl text-brand-light text-sm max-w-3xl mx-auto mt-6">
-                <p className="mb-2">Udział w konkursie jest dobrowolny i bezpłatny. Przed zgłoszeniem zapoznaj się z Regulaminem Konkursu oraz Klauzulą informacyjną RODO. Uczestnicy niepełnoletni zobowiązani są do dołączenia zgody przedstawiciela ustawowego.</p>
-                <p>Zgłoszenie należy przesłać wraz z wymaganymi dokumentami na adres <a href="mailto:s097260@student.wum.edu.pl" className="text-white font-bold hover:underline">s097260@student.wum.edu.pl</a>, w terminie określonym w Regulaminie Konkursu.</p>
+            <div className="text-gray-300 text-sm max-w-3xl mx-auto mt-6">
+                <p className="mb-2">Dla uczniów kształcących się w zawodzie technik leśnik. Pytania kieruj na: <a href="mailto:s097260@student.wum.edu.pl" className="text-white font-bold hover:underline">s097260@student.wum.edu.pl</a></p>
+                <p className="mb-2 mt-6">Udział w konkursie jest dobrowolny i bezpłatny. Przed zgłoszeniem zapoznaj się z Regulaminem Konkursu oraz Klauzulą informacyjną RODO. Uczestnicy niepełnoletni zobowiązani są do dołączenia zgody przedstawiciela ustawowego.</p>
             </div>
         </div>
         
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl mx-auto text-center">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Dokumenty do pobrania</h2>
-            <div className="flex flex-wrap justify-center gap-3">
-                <a href="/regulamin-konkursu.pdf" download className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg transition text-sm">Regulamin Konkursu</a>
-                <a href="/formularz-zgloszeniowy.pdf" download className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg transition text-sm">Formularze Zgłoszeniowe</a>
-                <a href="/klauzula-rodo.pdf" download className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg transition text-sm">Klauzula informacyjna RODO</a>
+        <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 max-w-4xl mx-auto text-center">
+            <h2 className="text-2xl font-serif font-bold text-[#143B2A] mb-6">Dokumenty do pobrania</h2>
+            <div className="flex flex-col md:flex-row flex-wrap justify-center gap-4">
+                <a href="/regulamin-konkursu.pdf" download className="bg-[#F8F9F5] border border-gray-200 hover:bg-[#EAECE1] text-[#143B2A] font-semibold py-3 px-6 rounded-lg transition text-sm">Regulamin Konkursu</a>
+                <a href="/formularz-zgloszeniowy.pdf" download className="bg-[#F8F9F5] border border-gray-200 hover:bg-[#EAECE1] text-[#143B2A] font-semibold py-3 px-6 rounded-lg transition text-sm">Formularz zgłoszeniowy</a>
+                <a href="/klauzula-rodo.pdf" download className="bg-[#F8F9F5] border border-gray-200 hover:bg-[#EAECE1] text-[#143B2A] font-semibold py-3 px-6 rounded-lg transition text-sm">Klauzula informacyjna RODO</a>
             </div>
         </div>
 
         <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 max-w-4xl mx-auto text-xs text-gray-500 leading-relaxed">
-            <strong className="text-gray-700">Prawa autorskie i Galeria:</strong> Prezentowane prace zostały zgłoszone do ogólnopolskiego konkursu edukacyjnego »Zauważ ryzyko, zanim kleszcz zauważy Ciebie – Nie odkładaj – Działaj!«. Prawa autorskie do prac przysługują ich twórcom lub innym uprawnionym podmiotom. Prace są publikowane na podstawie licencji udzielonych Organizatorowi Konkursu. Dane identyfikujące autorów są publikowane wyłącznie w zakresie objętym odpowiednią podstawą prawną. Brak publicznego oznaczenia imienia, nazwiska lub szkoły nie oznacza braku autorstwa pracy. Kopiowanie lub dalsze wykorzystywanie prac wymaga odpowiedniego uprawnienia albo podstawy wynikającej z przepisów prawa.
+            <strong className="text-gray-700">Prawa autorskie i Galeria:</strong> Prezentowane prace zostały zgłoszone do ogólnopolskiego konkursu edukacyjnego. Prawa autorskie do prac przysługują ich twórcom lub innym uprawnionym podmiotom. Prace są publikowane na podstawie licencji udzielonych Organizatorowi Konkursu.
         </div>
     </div>
 );
 
+// Twój Quiz z poprzedniej wiadomości (niezmodyfikowany pod względem mechaniki i pytań)
 const QuizView = () => {
     const [step, setStep] = useState('intro');
     const [fullName, setFullName] = useState('');
     
-    // Stany do obsługi wylosowanych pytań
     const [activeQuestions, setActiveQuestions] = useState([]);
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [score, setScore] = useState(0);
 
-    // Baza 20 pytań
     const allQuestions = [
         { q: "Jak najlepiej ubrać się do lasu?", options: ["Krótkie spodenki i sandały", "Długie, jasne spodnie i zakryte buty", "Ciemne, luźne ubrania"], correct: 1 },
         { q: "Jaki jest prawidłowy sposób usunięcia kleszcza?", options: ["Posmarowanie go masłem", "Wykręcenie go palcami", "Wyciągnięcie pęsetą prosto do góry"], correct: 2 },
@@ -337,7 +369,6 @@ const QuizView = () => {
     const handleStart = (e) => {
         e.preventDefault();
         if (fullName.trim()) {
-            // Losowanie i wybór dokładnie 10 pytań
             const shuffled = [...allQuestions].sort(() => Math.random() - 0.5).slice(0, 10);
             setActiveQuestions(shuffled);
             setStep('quiz');
@@ -363,7 +394,6 @@ const QuizView = () => {
         setActiveQuestions([]);
     };
 
-    // Obliczenia (wynik z 10 pytań)
     const percentage = activeQuestions.length > 0 ? (score / activeQuestions.length) * 100 : 0;
     const passed = percentage >= 70;
 
@@ -463,37 +493,30 @@ const QuizView = () => {
 
             {step === 'certificate' && (
                 <div className="max-w-4xl w-full animate-fade-in mx-auto">
-                    
-                    {/* Właściwy dokument certyfikatu oparty na nowym zdjęciu */}
                     <div className="relative w-full shadow-2xl mb-8 bg-white print:shadow-none">
                         <img 
                             src="/Certyfikat.jpg" 
                             alt="Certyfikat Ukończenia" 
                             className="w-full h-auto rounded-sm block"
                         />
-                        
                         <div className="absolute top-[58%] md:top-[59%] left-0 w-full text-center px-4">
                             <p className="text-2xl md:text-4xl lg:text-5xl font-serif font-bold text-gray-800 italic">
                                 {fullName}
                             </p>
                         </div>
-                        
                         <div className="absolute bottom-[14%] left-[18%] md:bottom-[15%] md:left-[17%]">
                             <p className="text-sm md:text-xl lg:text-2xl font-medium text-gray-800">
                                 {new Date().toLocaleDateString('pl-PL')}
                             </p>
                         </div>
                     </div>
-
                     <div className="mt-8 text-center print:hidden flex flex-col items-center gap-4">
-                        {/* Zastępczy przycisk pozwalający zapisać PDF bezpośrednio z przeglądarki */}
                         <button 
                             onClick={() => window.print()}
                             className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-xl shadow-md transition-transform transform hover:scale-105"
                         >
                             Zapisz / Wydrukuj dyplom 🖨️
                         </button>
-
                         <button 
                             onClick={resetQuiz}
                             className="text-sm text-gray-400 hover:text-green-700 transition underline font-medium"
@@ -517,10 +540,12 @@ export default function App() {
         setIsMobileMenuOpen(false);
     }, [currentView]);
 
+    // Zaktualizowana nawigacja – dodano osobną sekcję dla Nauczycieli zgodnie z prośbą
     const navItems = [
-        { id: 'home', label: 'Strona Główna' },
+        { id: 'home', label: 'Start' },
         { id: 'knowledge', label: 'Baza Wiedzy' },
         { id: 'education', label: 'Strefa Edukacji' },
+        { id: 'teachers', label: 'Dla nauczycieli' },
         { id: 'competition', label: 'Konkurs' },
         { id: 'quiz', label: 'Quiz' },
     ];
@@ -530,6 +555,7 @@ export default function App() {
             case 'home': return <HomeView changeView={setCurrentView} />;
             case 'knowledge': return <KnowledgeView />;
             case 'education': return <EducationView />;
+            case 'teachers': return <TeachersView />;
             case 'competition': return <CompetitionView />;
             case 'quiz': return <QuizView />;
             default: return <HomeView changeView={setCurrentView} />;
@@ -537,12 +563,11 @@ export default function App() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col font-sans text-gray-800">
-            {/* Pasek Nawigacyjny */}
-            {/* BANER TYMCZASOWY */}
-        <div className="bg-yellow-400 text-yellow-900 text-center py-2 px-4 text-xs font-bold tracking-wide">
-            Strona znajduje się w fazie przygotowania. Część prezentowanych materiałów ma charakter demonstracyjny i nie stanowi jeszcze ostatecznej, zweryfikowanej wersji treści edukacyjnych projektu.
-        </div>
+        <div className="min-h-screen flex flex-col font-sans text-gray-800 bg-[#F8F9F5]">
+            <div className="bg-yellow-400 text-yellow-900 text-center py-2 px-4 text-xs font-bold tracking-wide">
+                Strona znajduje się w fazie przygotowania. Część prezentowanych materiałów ma charakter demonstracyjny i nie stanowi jeszcze ostatecznej, zweryfikowanej wersji treści edukacyjnych projektu.
+            </div>
+            
             <nav className="bg-white shadow-sm sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-20">
@@ -556,7 +581,7 @@ export default function App() {
                                 <button 
                                     key={item.id}
                                     onClick={() => setCurrentView(item.id)}
-                                    className={`px-4 py-2 rounded-md font-medium transition ${currentView === item.id ? 'text-brand bg-brand-light' : 'text-gray-600 hover:text-brand hover:bg-gray-50'}`}
+                                    className={`px-3 py-2 rounded-md text-sm font-medium transition ${currentView === item.id ? 'text-brand bg-brand-light' : 'text-gray-600 hover:text-brand hover:bg-gray-50'}`}
                                 >
                                     {item.label}
                                 </button>
@@ -587,16 +612,12 @@ export default function App() {
                     </div>
                 )}
             </nav>
-            {/* Miejsce na renderowany widok */}
-            <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 bg-gray-50">
+
+            <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
                 {renderView()}
             </main>
             
-            {/* --- PRZYPIĘTY PASEK NA DOLE (STALE WIDOCZNY) --- */}
-           {/* --- PASEK NA DOLE (WIDOCZNY PO PRZEWINIĘCIU) --- */}
             <div className="w-full mt-auto border-t border-gray-200">
-                
-                {/* Sekcja patronatów */}
                 <section className="bg-white py-1.5 md:py-2">
                     <div className="max-w-7xl mx-auto px-4 text-center">
                         <h3 className="text-gray-400 font-bold uppercase tracking-widest mb-1 text-[10px]">
@@ -631,8 +652,5 @@ export default function App() {
                 </footer>
             </div>
         </div>
-               
     );
 }
-
-           
