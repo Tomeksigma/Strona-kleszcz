@@ -55,20 +55,20 @@ const HomeView = ({ changeView }) => {
 
     return (
         <div className="space-y-12 animate-fade-in relative pb-12">
-            {/* Nowa Główna sekcja (Hero) */}
-            <div className="relative w-full min-h-[450px] flex flex-col justify-center px-6 md:px-12 py-16 bg-[#122217] overflow-hidden rounded-3xl shadow-xl">
-                <div className="absolute inset-0 bg-[url('/Las_main.jpg')] bg-cover bg-center opacity-40 mix-blend-overlay"></div>
-                <div className="relative z-10 max-w-3xl">
+            {/* Nowa Główna sekcja (Hero) z tłem lasu - Rozszerzona */}
+            <div className="relative w-full h-[600px] flex flex-col justify-center px-6 md:px-12 py-16 bg-[#122217] overflow-hidden rounded-3xl shadow-xl">
+                <div className="absolute inset-0 bg-[url('/image_79b4eb.jpg')] bg-cover bg-center opacity-50 mix-blend-overlay"></div>
+                <div className="relative z-10 max-w-4xl mx-auto w-full text-center md:text-left">
                     <span className="text-[#d48b48] font-bold tracking-widest text-xs uppercase mb-4 block">
                         Projekt edukacyjny 2026
                     </span>
-                    <h1 className="text-4xl md:text-5xl font-serif font-bold text-white leading-tight mb-4">
+                    <h1 className="text-5xl md:text-7xl font-serif font-bold text-white leading-tight mb-6">
                         Zauważ ryzyko, zanim kleszcz zauważy Ciebie
                     </h1>
-                    <p className="text-lg md:text-xl text-gray-200 italic font-serif mb-8">
+                    <p className="text-xl md:text-2xl text-gray-200 italic font-serif mb-10">
                         Nie odkładaj – Działaj! Edukujemy uczniów i wspieramy nauczycieli w całej Polsce.
                     </p>
-                    <div className="flex flex-wrap gap-4">
+                    <div className="flex flex-wrap gap-4 justify-center md:justify-start">
                         <button 
                             onClick={() => changeView('education')} 
                             className="bg-[#EFA75D] hover:bg-[#d98b48] text-gray-900 px-8 py-3 rounded-full font-bold transition shadow-lg"
@@ -85,7 +85,31 @@ const HomeView = ({ changeView }) => {
                 </div>
             </div>
 
-            <section>
+            {/* Siatka odnośników na dole pierwszej strony (bez dodawania pustych podstron) */}
+            <section className="mt-16 relative z-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[
+                        { id: 'knowledge', title: 'Baza Wiedzy', desc: 'Najważniejsze informacje o kleszczach i profilaktyce.' },
+                        { id: 'education', title: 'Strefa Edukacji', desc: 'Materiały, komiksy i plakaty dla uczniów.' },
+                        { id: 'teachers', title: 'Dla nauczycieli', desc: 'Konspekty i interaktywne scenariusze lekcji.' },
+                        { id: 'competition', title: 'Konkurs', desc: 'Regulamin i zasady zgłoszeń do konkursu.' },
+                        { id: 'quiz', title: 'Wielki Quiz', desc: 'Sprawdź swoją wiedzę i zdobądź certyfikat.' },
+                        { id: 'survey', title: 'Ankieta', desc: 'Pomóż nam ulepszyć materiały edukacyjne.' }
+                    ].map((item) => (
+                        <div 
+                            key={item.id} 
+                            onClick={() => changeView(item.id)}
+                            className="bg-white rounded-2xl p-8 shadow-sm cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-gray-100"
+                        >
+                            <h3 className="text-2xl font-bold font-serif text-[#143B2A] mb-2">{item.title}</h3>
+                            <p className="text-gray-500 text-sm">{item.desc}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* Sekcja Aktualności pod odnośnikami */}
+            <section className="pt-12 border-t border-gray-200 mt-16">
                 <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-brand inline-block pb-2">Aktualności leśne</h2>
                 <div className="grid md:grid-cols-3 gap-6">
                     {articles.length > 0 ? (
@@ -114,29 +138,6 @@ const HomeView = ({ changeView }) => {
                     ) : (
                         <p className="text-gray-500 italic">Brak nowych wiadomości. Dodaj pierwszy artykuł w panelu!</p>
                     )}
-                </div>
-            </section>
-
-            {/* Nowa Siatka odnośników na dole pierwszej strony (bez dodawania pustych podstron) */}
-            <section className="mt-16 pt-8 border-t border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Odkryj zasoby projektu</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {[
-                        { id: 'knowledge', title: 'Baza Wiedzy', desc: 'Najważniejsze informacje o kleszczach i profilaktyce.' },
-                        { id: 'education', title: 'Strefa Edukacji', desc: 'Materiały, komiksy i plakaty dla uczniów.' },
-                        { id: 'teachers', title: 'Dla nauczycieli', desc: 'Konspekty i interaktywne scenariusze lekcji.' },
-                        { id: 'competition', title: 'Konkurs', desc: 'Regulamin i zasady zgłoszeń do konkursu.' },
-                        { id: 'quiz', title: 'Wielki Quiz', desc: 'Sprawdź swoją wiedzę i zdobądź certyfikat.' }
-                    ].map((item) => (
-                        <div 
-                            key={item.id} 
-                            onClick={() => changeView(item.id)}
-                            className="bg-white rounded-2xl p-8 shadow-sm cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-gray-100"
-                        >
-                            <h3 className="text-2xl font-bold font-serif text-[#143B2A] mb-2">{item.title}</h3>
-                            <p className="text-gray-500 text-sm">{item.desc}</p>
-                        </div>
-                    ))}
                 </div>
             </section>
 
