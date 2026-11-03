@@ -236,6 +236,9 @@ const EducationView = () => (
             <h1 className="text-4xl font-bold text-gray-800 mb-4">Strefa Edukacji</h1>
             <p className="text-gray-600">Darmowe materiały do pobrania dla szkół. Wybierz odpowiednią sekcję.</p>
         </div>
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8 text-blue-900 text-sm max-w-4xl mx-auto shadow-sm">
+        Materiały edukacyjne udostępnione w serwisie »Uwaga Kleszcz!« można bezpłatnie pobierać, drukować i wykorzystywać do celów edukacyjnych i niekomercyjnych, w szczególności podczas zajęć szkolnych, warsztatów i działań profilaktycznych. Przy dalszym udostępnianiu materiałów należy zachować wskazane oznaczenia autorstwa, źródeł i warunków licencji. Materiały pochodzące od podmiotów trzecich mogą podlegać odrębnym warunkom wykorzystania.
+        </div>
 
         <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-white border-t-4 border-blue-500 rounded-xl p-8 shadow-sm">
@@ -274,29 +277,26 @@ const EducationView = () => (
 const CompetitionView = () => (
     <div className="space-y-8 animate-fade-in">
         <div className="bg-brand-dark text-white rounded-2xl p-8 md:p-12 text-center shadow-lg">
-            <h1 className="text-3xl md:text-5xl font-bold mb-6">Konkurs Plastyczny "Bezpieczny Las"</h1>
-            <p className="text-brand-light text-lg max-w-2xl mx-auto">
-                Zaprojektuj ulotkę ostrzegającą przed kleszczami i wygraj atrakcyjne nagrody dla siebie i swojej klasy!
-            </p>
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+                Konkurs Edukacyjny "Zauważ ryzyko, zanim kleszcz zauważy Ciebie – Nie odkładaj – Działaj!"
+            </h1>
+            <div className="bg-white/10 p-6 rounded-xl text-brand-light text-sm max-w-3xl mx-auto mt-6">
+                <p className="mb-2">Udział w konkursie jest dobrowolny i bezpłatny. Przed zgłoszeniem zapoznaj się z Regulaminem Konkursu oraz Klauzulą informacyjną RODO. Uczestnicy niepełnoletni zobowiązani są do dołączenia zgody przedstawiciela ustawowego.</p>
+                <p>Zgłoszenie należy przesłać wraz z wymaganymi dokumentami na adres <a href="mailto:s097260@student.wum.edu.pl" className="text-white font-bold hover:underline">s097260@student.wum.edu.pl</a>, w terminie określonym w Regulaminie Konkursu.</p>
+            </div>
         </div>
         
-        <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-brand inline-block pb-2">Zasady Konkursu</h2>
-            <ul className="space-y-4 text-gray-700 mb-8">
-                <li className="flex items-start gap-3"><div className="w-2 h-2 mt-2 rounded-full bg-brand"></div><p>Konkurs skierowany jest do uczniów szkół podstawowych.</p></li>
-                <li className="flex items-start gap-3"><div className="w-2 h-2 mt-2 rounded-full bg-brand"></div><p>Praca musi być wykonana samodzielnie dowolną techniką plastyczną (format A4).</p></li>
-                <li className="flex items-start gap-3"><div className="w-2 h-2 mt-2 rounded-full bg-brand"></div><p>Termin odsyłania prac od <strong>01.01.2027</strong> do <strong>31.03.2027</strong>.</p></li>
-            </ul>
-            <div className="text-center">
-                {/* Zmieniono button na link pobierający z zaktualizowanym tekstem */}
-                <a 
-                    href="/Regulamin.pdf" 
-                    download
-                    className="inline-block bg-brand hover:bg-brand-dark text-white font-bold py-3 px-8 rounded-lg shadow-md transition-transform transform hover:scale-105"
-                >
-                    Pobierz regulamin konkursu (PDF)
-                </a>
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-4xl mx-auto text-center">
+            <h2 className="text-xl font-bold text-gray-800 mb-4">Dokumenty do pobrania</h2>
+            <div className="flex flex-wrap justify-center gap-3">
+                <a href="/regulamin-konkursu.pdf" download className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg transition text-sm">Regulamin Konkursu</a>
+                <a href="/formularz-zgloszeniowy.pdf" download className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg transition text-sm">Formularze Zgłoszeniowe</a>
+                <a href="/klauzula-rodo.pdf" download className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg transition text-sm">Klauzula informacyjna RODO</a>
             </div>
+        </div>
+
+        <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 max-w-4xl mx-auto text-xs text-gray-500 leading-relaxed">
+            <strong className="text-gray-700">Prawa autorskie i Galeria:</strong> Prezentowane prace zostały zgłoszone do ogólnopolskiego konkursu edukacyjnego »Zauważ ryzyko, zanim kleszcz zauważy Ciebie – Nie odkładaj – Działaj!«. Prawa autorskie do prac przysługują ich twórcom lub innym uprawnionym podmiotom. Prace są publikowane na podstawie licencji udzielonych Organizatorowi Konkursu. Dane identyfikujące autorów są publikowane wyłącznie w zakresie objętym odpowiednią podstawą prawną. Brak publicznego oznaczenia imienia, nazwiska lub szkoły nie oznacza braku autorstwa pracy. Kopiowanie lub dalsze wykorzystywanie prac wymaga odpowiedniego uprawnienia albo podstawy wynikającej z przepisów prawa.
         </div>
     </div>
 );
@@ -304,10 +304,8 @@ const CompetitionView = () => (
 const QuizView = () => {
     const [step, setStep] = useState('intro');
     const [fullName, setFullName] = useState('');
-    const [consent, setConsent] = useState(false);
-
     
-    // Nowe stany do obsługi wylosowanych pytań
+    // Stany do obsługi wylosowanych pytań
     const [activeQuestions, setActiveQuestions] = useState([]);
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [score, setScore] = useState(0);
@@ -338,7 +336,7 @@ const QuizView = () => {
 
     const handleStart = (e) => {
         e.preventDefault();
-        if (fullName.trim() && consent) {
+        if (fullName.trim()) {
             // Losowanie i wybór dokładnie 10 pytań
             const shuffled = [...allQuestions].sort(() => Math.random() - 0.5).slice(0, 10);
             setActiveQuestions(shuffled);
@@ -360,13 +358,10 @@ const QuizView = () => {
     const resetQuiz = () => {
         setStep('intro');
         setFullName('');
-        setConsent(false);
         setCurrentQuestion(0);
         setScore(0);
         setActiveQuestions([]);
     };
-
-   
 
     // Obliczenia (wynik z 10 pytań)
     const percentage = activeQuestions.length > 0 ? (score / activeQuestions.length) * 100 : 0;
@@ -390,22 +385,15 @@ const QuizView = () => {
                                 placeholder="Np. Jan Kowalski"
                             />
                         </div>
-                        <div className="flex items-start gap-3 bg-gray-50 p-4 rounded-lg border border-gray-100">
-                            <input 
-                                type="checkbox" 
-                                required 
-                                id="consent"
-                                checked={consent}
-                                onChange={(e) => setConsent(e.target.checked)}
-                                className="mt-1 w-5 h-5 text-green-600 cursor-pointer"
-                            />
-                            <label htmlFor="consent" className="text-sm text-gray-600 cursor-pointer">
-                                Wyrażam zgodę na przetwarzanie podanych przeze mnie danych w celu wygenerowania imiennego dyplomu ukończenia quizu.
-                            </label>
+                        
+                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 text-xs text-gray-600 mb-4 mt-2">
+                            Podane imię i nazwisko zostaną wykorzystane wyłącznie do wygenerowania imiennego certyfikatu w Twojej przeglądarce. Dane nie są zapisywane w bazie ani przesyłane do administratora strony. Certyfikat możesz samodzielnie pobrać na swoje urządzenie.<br/><br/>
+                            <strong>Pamiętaj o zapisaniu certyfikatu</strong> – po zakończeniu sesji jego ponowne pobranie może wymagać ponownego rozwiązania quizu.
                         </div>
+
                         <button 
                             type="submit" 
-                            disabled={!fullName.trim() || !consent}
+                            disabled={!fullName.trim()}
                             className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-xl transition-colors disabled:opacity-50"
                         >
                             Losuj pytania i Rozpocznij &rarr;
@@ -445,7 +433,13 @@ const QuizView = () => {
                     </div>
                     {passed ? (
                         <div className="animate-fade-in">
-                            <p className="text-xl text-gray-700 mb-8">Wspaniale, <span className="font-bold">{fullName}</span>! Zdałeś!</p>
+                            <div className="text-center mb-6">
+                                <h3 className="text-2xl font-bold text-green-600 mb-2">Gratulacje! Udało Ci się zaliczyć quiz.</h3>
+                                <p className="text-gray-700 mb-4">Możesz teraz wygenerować i pobrać swój certyfikat.</p>
+                                <div className="bg-green-50 text-green-800 border border-green-200 p-3 rounded-lg text-sm font-semibold">
+                                    Jeżeli bierzesz udział w konkursie edukacyjnym, zachowaj certyfikat, ponieważ będzie potrzebny przy zgłoszeniu.
+                                </div>
+                            </div>
                             <button 
                                 onClick={() => setStep('certificate')}
                                 className="w-full bg-yellow-500 hover:bg-yellow-600 text-white text-lg font-bold py-4 px-6 rounded-xl shadow-lg hover:scale-105 transition-transform"
@@ -455,7 +449,7 @@ const QuizView = () => {
                         </div>
                     ) : (
                         <div className="animate-fade-in">
-                            <p className="text-lg text-gray-700 mb-8">Niestety, zabrakło Ci odrobiny wiedzy. Wymagane jest 60%.</p>
+                            <p className="text-lg text-gray-700 mb-8">Niestety, zabrakło Ci odrobiny wiedzy. Wymagane jest 70%.</p>
                             <button 
                                 onClick={resetQuiz}
                                 className="w-full border-2 border-green-600 text-green-600 hover:bg-green-50 text-lg font-bold py-4 px-6 rounded-xl transition-colors"
@@ -467,7 +461,6 @@ const QuizView = () => {
                 </div>
             )}
 
-                    {/* KROK 4: CERTYFIKAT */}
             {step === 'certificate' && (
                 <div className="max-w-4xl w-full animate-fade-in mx-auto">
                     
@@ -546,6 +539,10 @@ export default function App() {
     return (
         <div className="min-h-screen flex flex-col font-sans text-gray-800 pb-32 md:pb-28">
             {/* Pasek Nawigacyjny */}
+            {/* BANER TYMCZASOWY */}
+        <div className="bg-yellow-400 text-yellow-900 text-center py-2 px-4 text-xs font-bold tracking-wide">
+            Strona znajduje się w fazie przygotowania. Część prezentowanych materiałów ma charakter demonstracyjny i nie stanowi jeszcze ostatecznej, zweryfikowanej wersji treści edukacyjnych projektu.
+        </div>
             <nav className="bg-white shadow-sm sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-20">
@@ -632,10 +629,19 @@ export default function App() {
                         </div>
                     </div>
                 </section>
-
-                {/* Stopka serwisu - minimalnie chudsza */}
-                <footer className="bg-gray-900 text-gray-400 py-1.5 md:py-2 text-center text-[10px]">
-                    &copy; 2026 Kampania Edukacyjna "Uwaga Kleszcz!". Wszelkie prawa zastrzeżone. {/*[cite: 4] */}
+                <footer className="bg-gray-900 text-gray-400 py-4 text-center text-[10px] md:text-xs">
+                    <div className="max-w-7xl mx-auto px-4 flex flex-col gap-3">
+                        <div className="flex flex-wrap justify-center gap-4 text-gray-300 font-medium">
+                            <a href="/regulamin-serwisu.pdf" download className="hover:text-white transition">Regulamin serwisu</a>
+                            <a href="/polityka-prywatnosci.pdf" download className="hover:text-white transition">Polityka prywatności i cookies</a>
+                            <a href="/regulamin-konkursu.pdf" download className="hover:text-white transition">Regulamin konkursu</a>
+                            <a href="/dokumentacja-konkursowa.pdf" download className="hover:text-white transition">Dokumentacja konkursowa (RODO)</a>
+                        </div>
+                        <div className="text-gray-500">
+                            <p>Administrator strony: Olivia Moritz | E-mail: <a href="mailto:s097260@student.wum.edu.pl" className="text-brand hover:text-brand-light">s097260@student.wum.edu.pl</a></p>
+                            <p className="mt-1">&copy; 2026 Kampania Edukacyjna "Uwaga Kleszcz!". Wszelkie prawa zastrzeżone.</p>
+                        </div>
+                    </div>
                 </footer>
             </div>
         </div>
