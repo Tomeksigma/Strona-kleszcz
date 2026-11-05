@@ -55,32 +55,37 @@ const HomeView = ({ changeView }) => {
 
     return (
             <div className="space-y-12 animate-fade-in relative pb-12">
-            {/* Nowa Główna sekcja (Hero) z tłem lasu - Rozszerzona */}
+                {/* Nowa Główna sekcja (Hero) z tłem lasu - Rozszerzona */}
                 <div className="relative w-full h-[600px] flex flex-col justify-center px-6 md:px-12 py-16 bg-[#122217] overflow-hidden rounded-3xl shadow-xl">
-                
-                  <div className="relative z-10 max-w-4xl mx-auto w-full text-center md:text-left">
-                    <span className="text-[#d48b48] font-bold tracking-widest text-xs uppercase mb-4 block">
-                        Projekt edukacyjny 2026
-                    </span>
-                    <h1 className="text-5xl md:text-7xl font-serif font-bold text-white leading-tight mb-6">
-                        Zauważ ryzyko, zanim kleszcz zauważy Ciebie
-                    </h1>
-                    <p className="text-xl md:text-2xl text-gray-200 italic font-serif mb-10">
-                        Nie odkładaj – Działaj! Edukujemy uczniów i wspieramy nauczycieli w całej Polsce.
-                    </p>
-                    <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-                        <button 
-                            onClick={() => changeView('education')} 
-                            className="bg-[#EFA75D] hover:bg-[#d98b48] text-gray-900 px-8 py-3 rounded-full font-bold transition shadow-lg"
-                        >
-                            Wejdź do Strefy Edukacji
-                        </button>
-                        <button 
-                            onClick={() => changeView('competition')} 
-                            className="bg-transparent border border-gray-400 text-gray-200 px-8 py-3 rounded-full font-bold hover:bg-white/10 hover:border-white transition"
-                        >
-                            Konkurs na mural
-                        </button>
+                    
+                    {/* TUTAJ WSTAWIASZ TŁO I PRZYCIEMNIENIE */}
+                    <div className="absolute inset-0 bg-[url('/las_main.jpg')] bg-cover bg-center opacity-100"></div>
+                    <div className="absolute inset-0 bg-black/30"></div>
+                    
+                    <div className="relative z-10 max-w-4xl mx-auto w-full text-center md:text-left">
+                        <span className="text-[#d48b48] font-bold tracking-widest text-xs uppercase mb-4 block">
+                            Projekt edukacyjny 2026
+                        </span>
+                        <h1 className="text-5xl md:text-7xl font-serif font-bold text-white leading-tight mb-6">
+                            Zauważ ryzyko, zanim kleszcz zauważy Ciebie
+                        </h1>
+                        <p className="text-xl md:text-2xl text-gray-200 italic font-serif mb-10">
+                            Nie odkładaj – Działaj! Edukujemy uczniów i wspieramy nauczycieli w całej Polsce.
+                        </p>
+                        <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+                            <button 
+                                onClick={() => changeView('education')} 
+                                className="bg-[#EFA75D] hover:bg-[#d98b48] text-gray-900 px-8 py-3 rounded-full font-bold transition shadow-lg"
+                            >
+                                Wejdź do Strefy Edukacji
+                            </button>
+                            <button 
+                                onClick={() => changeView('competition')} 
+                                className="bg-transparent border border-gray-400 text-gray-200 px-8 py-3 rounded-full font-bold hover:bg-white/10 hover:border-white transition"
+                            >
+                                Konkurs na mural
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
