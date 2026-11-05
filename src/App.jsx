@@ -54,11 +54,11 @@ const HomeView = ({ changeView }) => {
     }, [selectedArticle]);
 
     return (
-        <div className="space-y-12 animate-fade-in relative pb-12">
+            <div className="space-y-12 animate-fade-in relative pb-12">
             {/* Nowa Główna sekcja (Hero) z tłem lasu - Rozszerzona */}
-            <div className="relative w-full h-[600px] flex flex-col justify-center px-6 md:px-12 py-16 bg-[#122217] overflow-hidden rounded-3xl shadow-xl">
-                <div className="absolute inset-0 bg-[url('/las_main.jpg')] bg-cover bg-center opacity-50 mix-blend-overlay"></div>
-                <div className="relative z-10 max-w-4xl mx-auto w-full text-center md:text-left">
+                <div className="relative w-full h-[600px] flex flex-col justify-center px-6 md:px-12 py-16 bg-[#122217] overflow-hidden rounded-3xl shadow-xl">
+                
+                  <div className="relative z-10 max-w-4xl mx-auto w-full text-center md:text-left">
                     <span className="text-[#d48b48] font-bold tracking-widest text-xs uppercase mb-4 block">
                         Projekt edukacyjny 2026
                     </span>
