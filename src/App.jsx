@@ -538,21 +538,120 @@ const QuizView = () => {
 const CuriositiesView = () => {
     const [discoveredIds, setDiscoveredIds] = useState([]);
     const [activeFilter, setActiveFilter] = useState('Wszystkie');
+    const [guessOpen, setGuessOpen] = useState(null); // ID karty z otwartym panelem zgadywania
+    const [choices, setChoices] = useState({}); // Przechowuje wybory użytkownika: { cardId: optionIndex }
+    const [scoredIds, setScoredIds] = useState([]); // ID kart, w których użytkownik zgadł poprawnie za pierwszym razem
 
-    // Odtworzona pełna baza 12 pytań widocznych na zdjęciach
+    // Zaktualizowana baza danych o strukturę zgadywania
     const curiositiesData = [
-        { id: 1, category: 'Biologia kleszcza', title: 'Czy kleszcz jest owadem?', answer: 'Nie. Kleszcze są pajęczakami. Dorosłe osobniki mają osiem odnóży, a larwy sześć.', explanation: 'Kleszcze należą do pajęczaków (Arachnida), razem z pająkami i roztoczami. Owady mają trzy pary odnóży, a dorosłe kleszcze — cztery pary; larwa kleszcza ma dopiero trzy pary.', meaning: 'Nie myl kleszczy z owadami — to wpływa na rozumienie ich biologii i sposobu żerowania.', source: 'ECDC – disease vectors' },
-        { id: 2, category: 'Biologia kleszcza', title: 'Czy kleszcze skaczą z drzew?', answer: 'Nie. Kleszcze nie skaczą i nie latają. Zwykle oczekują na żywiciela na roślinności, wykorzystując zachowanie nazywane questing.', explanation: 'Kleszcz wspięty na trawę lub krzew wyciąga przednie odnóża i czeka na kontakt z przechodzącym żywicielem (questing). Nie spada celowo z gałęzi drzew.', meaning: 'Kontakt z trawą i krzewami prowadzi do ukłucia — kleszcz czeka właśnie tam, a nie na drzewie.', source: 'ECDC – disease vectors' },
-        { id: 3, category: 'Biologia kleszcza', title: 'Jak kleszcz wykrywa człowieka?', answer: 'Wykorzystuje narządy zmysłowe, między innymi narząd Hallera na pierwszej parze odnóży, który pomaga odbierać bodźce środowiskowe.', explanation: 'Narząd Hallera to struktura zmysłowa na przednich odnóżach kleszcza, odbierająca bodźce chemiczne i fizyczne z otoczenia. Pomaga kleszczowi namierzyć żywiciela bez wzroku.', meaning: 'Kleszcz wykrywa żywiciela bez wzroku podobnego do ludzkiego — nie da się go „oszukać” samym cichym chodzeniem.', source: 'ECDC – disease vectors' },
-        { id: 4, category: 'Biologia kleszcza', title: 'Dlaczego małe kleszcze są trudne do zauważenia?', answer: 'Są niezwykle małe (nimfy mają ok. 1-1.5 mm) i ich ukłucie jest bezbolesne dzięki substancjom znieczulającym.', explanation: 'Ślina kleszcza zawiera koktajl substancji, w tym znieczulające, co sprawia, że moment wkłucia umyka naszej uwadze.', meaning: 'Samo oglądanie ciała musi być bardzo dokładne, zwłaszcza w zgięciach stawów.', source: 'WHO' },
-        { id: 5, category: 'Biologia kleszcza', title: 'Czy kleszcz rośnie podczas pobierania krwi?', answer: 'Tak, jego objętość może wzrosnąć nawet stukrotnie.', explanation: 'Samica kleszcza przed żerowaniem jest płaska, ale po kilkudniowym posiłku pęcznieje, przybierając kształt szarej fasolki.', meaning: 'Duży, szary kleszcz oznacza, że przebywał w skórze co najmniej kilkadziesiąt godzin.', source: 'PZH' },
-        { id: 6, category: 'Kleszcze i środowisko', title: 'Dlaczego kleszcze lubią wilgotne miejsca?', answer: 'Wysoka wilgotność jest im niezbędna do przetrwania; w suchym środowisku szybko tracą wodę.', explanation: 'Kleszcze są bardzo wrażliwe na wysychanie (desykację). Dlatego w upalne, suche dni schodzą niżej do ściółki, gdzie jest wilgotniej.', meaning: 'Zacienione, wilgotne lasy liściaste to miejsca o najwyższym ryzyku spotkania kleszcza.', source: 'Lasy Państwowe' },
-        { id: 7, category: 'Kleszcze i środowisko', title: 'Jak długo żyje kleszcz?', answer: 'Cykl życiowy kleszcza pospolitego w Polsce trwa zazwyczaj od 2 do 3 lat.', explanation: 'Aby przejść przez wszystkie stadia (larwa, nimfa, dorosły osobnik), kleszcz musi znaleźć trzech żywicieli.', meaning: 'Kleszcz, którego spotkasz, mógł już wcześniej żerować na mniejszych zwierzętach (np. gryzoniach), nabywając patogeny.', source: 'ECDC' },
-        { id: 8, category: 'Kleszcze i środowisko', title: 'Ile jaj może złożyć samica?', answer: 'Najedzona samica kleszcza pospolitego składa od 2000 do 3000 jaj.', explanation: 'Po złożeniu pakietu jaj w wilgotnej ściółce samica ginie. Z jaj wylęgają się sześcionożne larwy.', meaning: 'Populacja kleszczy w sprzyjających warunkach może wzrastać lawinowo.', source: 'PZH' },
-        { id: 9, category: 'Kleszcze i środowisko', title: 'Czy kleszcze są aktywne tylko latem?', answer: 'Nie, stają się aktywne, gdy temperatura przekracza 4-5°C.', explanation: 'Ze względu na łagodne zimy, sezon aktywności kleszczy wydłuża się i obecnie mogą atakować nawet w grudniu czy styczniu.', meaning: 'Zabezpieczaj siebie i zwierzęta domowe niemal przez cały rok, a nie tylko w wakacje.', source: 'WHO' },
-        { id: 10, category: 'Fakty medyczne i naukowe', title: 'Czy KZM można zakazić się bez ukłucia?', answer: 'Tak, rzadziej można zakazić się drogą pokarmową, np. pijąc niepasteryzowane mleko zakażonych kóz, owiec czy krów.', explanation: 'Wirus Kleszczowego Zapalenia Mózgu może przenikać do mleka zakażonych zwierząt gospodarskich.', meaning: 'Unikaj surowego, niepasteryzowanego mleka z niesprawdzonych źródeł.', source: 'PZH' },
-        { id: 11, category: 'Fakty medyczne i naukowe', title: 'Ile gatunków kleszczy stwierdzono w Polsce?', answer: 'W Polsce żyje na stałe około 19 gatunków kleszczy.', explanation: 'Dla ludzi najgroźniejszy jest kleszcz pospolity (Ixodes ricinus) oraz kleszcz łąkowy (Dermacentor reticulatus), znany z przenoszenia babeszjozy u psów.', meaning: 'Zagrożenie jest zróżnicowane w zależności od terenu i żywiciela.', source: 'Narodowy Instytut Zdrowia Publicznego' },
-        { id: 12, category: 'Fakty medyczne i naukowe', title: 'Jak naukowcy badają kleszcze w terenie?', answer: 'Najczęściej używają metody "flagowania", przeciągając jasny, flanelowy materiał po roślinności.', explanation: 'Kleszcze w postawie oczekującej przyczepiają się do przesuwanego materiału, co pozwala badaczom na ich zliczenie i zebranie do badań genetycznych.', meaning: 'To udowadnia, że szczelny, gładki ubiór utrudnia kleszczom przyczepienie się do Ciebie.', source: 'Lasy Państwowe' }
+        { 
+            id: 1, category: 'Biologia kleszcza', title: 'Czy kleszcz jest owadem?', 
+            answer: 'Nie. Kleszcze są pajęczakami. Dorosłe osobniki mają osiem odnóży, a larwy sześć.', 
+            explanation: 'Kleszcze należą do pajęczaków (Arachnida), razem z pająkami i roztoczami. Owady mają trzy pary odnóży, a dorosłe kleszcze — cztery pary; larwa kleszcza ma dopiero trzy pary.', 
+            meaning: 'Nie myl kleszczy z owadami — to wpływa na rozumienie ich biologii i sposobu żerowania.', 
+            source: 'ECDC – disease vectors',
+            guessOptions: ['Tak, to owad latający', 'Nie, to rodzaj skorupiaka', 'Nie, należą do pajęczaków'],
+            correctGuessIndex: 2
+        },
+        { 
+            id: 2, category: 'Biologia kleszcza', title: 'Czy kleszcze skaczą z drzew?', 
+            answer: 'Nie. Kleszcze nie skaczą i nie latają. Zwykle oczekują na żywiciela na roślinności, wykorzystując zachowanie nazywane questing.', 
+            explanation: 'Kleszcz wspięty na trawę lub krzew wyciąga przednie odnóża i czeka na kontakt z przechodzącym żywicielem (questing). Nie spada celowo z gałęzi drzew.', 
+            meaning: 'Kontakt z trawą i krzewami prowadzi do ukłucia — kleszcz czeka właśnie tam, a nie na drzewie.', 
+            source: 'ECDC – disease vectors',
+            guessOptions: ['Nie — nie skaczą ani nie latają', 'Tak, czekają na gałęziach', 'Skaczą tylko dorosłe'],
+            correctGuessIndex: 0
+        },
+        { 
+            id: 3, category: 'Biologia kleszcza', title: 'Jak kleszcz wykrywa człowieka?', 
+            answer: 'Wykorzystuje narządy zmysłowe, między innymi narząd Hallera na pierwszej parze odnóży, który pomaga odbierać bodźce środowiskowe.', 
+            explanation: 'Narząd Hallera to struktura zmysłowa na przednich odnóżach kleszcza, odbierająca bodźce chemiczne i fizyczne z otoczenia. Pomaga kleszczowi namierzyć żywiciela bez wzroku.', 
+            meaning: 'Kleszcz wykrywa żywiciela bez wzroku podobnego do ludzkiego — nie da się go „oszukać” samym cichym chodzeniem.', 
+            source: 'ECDC – disease vectors',
+            guessOptions: ['Wykorzystuje doskonały wzrok', 'Przez narząd Hallera (węch/temperatura)', 'Reaguje na hałas'],
+            correctGuessIndex: 1
+        },
+        { 
+            id: 4, category: 'Biologia kleszcza', title: 'Dlaczego małe kleszcze są trudne do zauważenia?', 
+            answer: 'Są niezwykle małe (nimfy mają ok. 1-1.5 mm) i ich ukłucie jest bezbolesne dzięki substancjom znieczulającym.', 
+            explanation: 'Ślina kleszcza zawiera koktajl substancji, w tym znieczulające, co sprawia, że moment wkłucia umyka naszej uwadze.', 
+            meaning: 'Samo oglądanie ciała musi być bardzo dokładne, zwłaszcza w zgięciach stawów.', 
+            source: 'WHO',
+            guessOptions: ['Zmieniają kolor na taki jak skóra', 'Są bardzo małe, a ich ślina znieczula', 'Atakują tylko w nocy'],
+            correctGuessIndex: 1
+        },
+        { 
+            id: 5, category: 'Biologia kleszcza', title: 'Czy kleszcz rośnie podczas pobierania krwi?', 
+            answer: 'Tak, jego objętość może wzrosnąć nawet stukrotnie.', 
+            explanation: 'Samica kleszcza przed żerowaniem jest płaska, ale po kilkudniowym posiłku pęcznieje, przybierając kształt szarej fasolki.', 
+            meaning: 'Duży, szary kleszcz oznacza, że przebywał w skórze co najmniej kilkadziesiąt godzin.', 
+            source: 'PZH',
+            guessOptions: ['Tak, pęcznieje i staje się szary', 'Nie, jego rozmiar się nie zmienia', 'Tak, ale tylko w ciągu pierwszej godziny'],
+            correctGuessIndex: 0
+        },
+        { 
+            id: 6, category: 'Kleszcze i środowisko', title: 'Dlaczego kleszcze lubią wilgotne miejsca?', 
+            answer: 'Wysoka wilgotność jest im niezbędna do przetrwania; w suchym środowisku szybko tracą wodę.', 
+            explanation: 'Kleszcze są bardzo wrażliwe na wysychanie (desykację). Dlatego w upalne, suche dni schodzą niżej do ściółki, gdzie jest wilgotniej.', 
+            meaning: 'Zacienione, wilgotne lasy liściaste to miejsca o najwyższym ryzyku spotkania kleszcza.', 
+            source: 'Lasy Państwowe',
+            guessOptions: ['Łatwiej im tam pływać', 'Unikają słońca, bo je razi', 'Jest im niezbędna do przetrwania (szybko schną)'],
+            correctGuessIndex: 2
+        },
+        { 
+            id: 7, category: 'Kleszcze i środowisko', title: 'Jak długo żyje kleszcz?', 
+            answer: 'Cykl życiowy kleszcza pospolitego w Polsce trwa zazwyczaj od 2 do 3 lat.', 
+            explanation: 'Aby przejść przez wszystkie stadia (larwa, nimfa, dorosły osobnik), kleszcz musi znaleźć trzech żywicieli.', 
+            meaning: 'Kleszcz, którego spotkasz, mógł już wcześniej żerować na mniejszych zwierzętach (np. gryzoniach), nabywając patogeny.', 
+            source: 'ECDC',
+            guessOptions: ['Od kilku tygodni do miesiąca', 'Od 2 do 3 lat w Polsce', 'Żyje tylko jeden sezon letni'],
+            correctGuessIndex: 1
+        },
+        { 
+            id: 8, category: 'Kleszcze i środowisko', title: 'Ile jaj może złożyć samica?', 
+            answer: 'Najedzona samica kleszcza pospolitego składa od 2000 do 3000 jaj.', 
+            explanation: 'Po złożeniu pakietu jaj w wilgotnej ściółce samica ginie. Z jaj wylęgają się sześcionożne larwy.', 
+            meaning: 'Populacja kleszczy w sprzyjających warunkach może wzrastać lawinowo.', 
+            source: 'PZH',
+            guessOptions: ['Około 10-20', 'Kilkaset', 'Od 2000 do 3000'],
+            correctGuessIndex: 2
+        },
+        { 
+            id: 9, category: 'Kleszcze i środowisko', title: 'Czy kleszcze są aktywne tylko latem?', 
+            answer: 'Nie, stają się aktywne, gdy temperatura przekracza 4-5°C.', 
+            explanation: 'Ze względu na łagodne zimy, sezon aktywności kleszczy wydłuża się i obecnie mogą atakować nawet w grudniu czy styczniu.', 
+            meaning: 'Zabezpieczaj siebie i zwierzęta domowe niemal przez cały rok, a nie tylko w wakacje.', 
+            source: 'WHO',
+            guessOptions: ['Tak, hibernują od września do maja', 'Nie, stają się aktywne już przy 4-5°C', 'Są aktywne tylko podczas deszczu'],
+            correctGuessIndex: 1
+        },
+        { 
+            id: 10, category: 'Fakty medyczne i naukowe', title: 'Czy KZM można zakazić się bez ukłucia?', 
+            answer: 'Tak, rzadziej można zakazić się drogą pokarmową, np. pijąc niepasteryzowane mleko zakażonych kóz, owiec czy krów.', 
+            explanation: 'Wirus Kleszczowego Zapalenia Mózgu może przenikać do mleka zakażonych zwierząt gospodarskich.', 
+            meaning: 'Unikaj surowego, niepasteryzowanego mleka z niesprawdzonych źródeł.', 
+            source: 'PZH',
+            guessOptions: ['Tak, pijąc surowe mleko zakażonych zwierząt', 'Nie, zakażenie wymaga kontaktu krwi z krwią', 'Można zarazić się przez dotyk kleszcza'],
+            correctGuessIndex: 0
+        },
+        { 
+            id: 11, category: 'Fakty medyczne i naukowe', title: 'Ile gatunków kleszczy stwierdzono w Polsce?', 
+            answer: 'W Polsce żyje na stałe około 19 gatunków kleszczy.', 
+            explanation: 'Dla ludzi najgroźniejszy jest kleszcz pospolity (Ixodes ricinus) oraz kleszcz łąkowy (Dermacentor reticulatus), znany z przenoszenia babeszjozy u psów.', 
+            meaning: 'Zagrożenie jest zróżnicowane w zależności od terenu i żywiciela.', 
+            source: 'Narodowy Instytut Zdrowia Publicznego',
+            guessOptions: ['Tylko jeden', 'Około 19 gatunków', 'Ponad 500'],
+            correctGuessIndex: 1
+        },
+        { 
+            id: 12, category: 'Fakty medyczne i naukowe', title: 'Jak naukowcy badają kleszcze w terenie?', 
+            answer: 'Najczęściej używają metody "flagowania", przeciągając jasny, flanelowy materiał po roślinności.', 
+            explanation: 'Kleszcze w postawie oczekującej przyczepiają się do przesuwanego materiału, co pozwala badaczom na ich zliczenie i zebranie do badań genetycznych.', 
+            meaning: 'To udowadnia, że szczelny, gładki ubiór utrudnia kleszczom przyczepienie się do Ciebie.', 
+            source: 'Lasy Państwowe',
+            guessOptions: ['Metodą flagowania (jasny materiał po trawie)', 'Używają pułapek z pożywieniem', 'Łapią je w nocy z użyciem latarek UV'],
+            correctGuessIndex: 0
+        }
     ];
 
     const categories = ['Wszystkie', 'Biologia kleszcza', 'Kleszcze i środowisko', 'Fakty medyczne i naukowe'];
@@ -564,9 +663,27 @@ const CuriositiesView = () => {
     // Zliczanie dla przycisków filtrujących
     const getCategoryCount = (cat) => cat === 'Wszystkie' ? curiositiesData.length : curiositiesData.filter(c => c.category === cat).length;
 
-    const handleReveal = (id) => {
+    const openGuessPanel = (id) => {
+        setGuessOpen(id);
+    };
+
+    const handleGuessPick = (id, optionIndex) => {
+        const curiosity = curiositiesData.find(c => c.id === id);
+        
+        // Zapisujemy wybór użytkownika
+        setChoices(prev => ({ ...prev, [id]: optionIndex }));
+        
+        // Zaznaczamy kartę jako odkrytą
         if (!discoveredIds.includes(id)) {
             setDiscoveredIds([...discoveredIds, id]);
+        }
+        
+        // Zamykamy panel zgadywania
+        setGuessOpen(null);
+        
+        // Jeśli odpowiedź jest poprawna, przyznajemy punkt
+        if (optionIndex === curiosity.correctGuessIndex) {
+            setScoredIds(prev => [...prev, id]);
         }
     };
 
@@ -574,13 +691,20 @@ const CuriositiesView = () => {
         const undiscovered = curiositiesData.filter(c => !discoveredIds.includes(c.id));
         if (undiscovered.length > 0) {
             const random = undiscovered[Math.floor(Math.random() * undiscovered.length)];
-            handleReveal(random.id);
+            openGuessPanel(random.id);
         }
+    };
+
+    const handleReset = () => {
+        setDiscoveredIds([]);
+        setScoredIds([]);
+        setChoices({});
+        setGuessOpen(null);
     };
 
     return (
         <div className="animate-fade-in bg-[#F8F9F5] min-h-screen pb-20">
-            {/* Header / Hero Section (odwzorowanie ciemnego tła z pierwszego zdjęcia) */}
+            {/* Header / Hero Section (ciemne tło) */}
             <div className="bg-[#0F291E] w-full px-6 md:px-12 py-16 text-white text-center md:text-left">
                 <div className="max-w-7xl mx-auto">
                     <span className="text-[#EFA75D] font-bold tracking-widest text-xs uppercase mb-4 block">Ciekawostki</span>
@@ -593,7 +717,8 @@ const CuriositiesView = () => {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
+            {/* Usunięto klasę -mt-8 aby komunikaty nie nachodziły na Hero */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 relative z-10">
                 
                 {/* Komunikaty ostrzegawcze (żółty i zielony box) */}
                 <div className="space-y-4 mb-8">
@@ -615,7 +740,7 @@ const CuriositiesView = () => {
                         <div className="flex flex-wrap gap-2">
                             <button onClick={handleRandomReveal} className="px-4 py-2 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 transition">Losuj ciekawostkę</button>
                             <button className="px-4 py-2 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 transition">Tryb pełnoekranowy (dla nauczyciela)</button>
-                            <button onClick={() => setDiscoveredIds([])} className="px-4 py-2 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 transition">Reset postępu</button>
+                            <button onClick={handleReset} className="px-4 py-2 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 transition">Reset postępu</button>
                         </div>
                     </div>
                     {/* Pasek progressu */}
@@ -641,11 +766,14 @@ const CuriositiesView = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredData.map((item) => {
                         const isRevealed = discoveredIds.includes(item.id);
+                        const isGuessing = guessOpen === item.id;
+                        const userChoice = choices[item.id];
+                        const isCorrect = userChoice === item.correctGuessIndex;
+
                         return (
                             <div key={item.id} className="bg-[#FCFDF9] border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col h-full transition-all hover:shadow-md">
                                 <div className="flex justify-between items-start mb-4 text-xs font-bold text-gray-400 uppercase tracking-wider">
                                     <span className="flex items-center gap-2">
-                                        {/* Prosta ikona SVG kategorii */}
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
                                         {item.category}
                                     </span>
@@ -654,20 +782,47 @@ const CuriositiesView = () => {
                                 <h3 className="text-xl font-serif font-bold text-gray-900 mb-6">{item.title}</h3>
                                 
                                 <div className="mt-auto flex-grow flex flex-col justify-end">
-                                    {!isRevealed ? (
+                                    
+                                    {/* Stan 1: Zamknięta, nie zgaduje */}
+                                    {!isRevealed && !isGuessing && (
                                         <button 
-                                            onClick={() => handleReveal(item.id)}
-                                            className="w-full bg-[#EFA75D] hover:bg-[#d98b48] text-gray-900 font-bold py-3 px-4 rounded-xl transition-colors mt-4"
+                                            onClick={() => openGuessPanel(item.id)}
+                                            className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-xl transition-colors mt-4"
                                         >
                                             Odkryj ciekawostkę
                                         </button>
-                                    ) : (
-                                        <div className="space-y-4 animate-fade-in text-sm text-gray-700">
+                                    )}
+
+                                    {/* Stan 2: Tryb zgadywania (Zgadnij zanim odkryjesz) */}
+                                    {isGuessing && !isRevealed && (
+                                        <div className="mt-4 animate-fade-in">
+                                            <p className="text-sm font-bold text-gray-700 mb-3">Zgadnij, zanim odkryjesz:</p>
+                                            <div className="space-y-2">
+                                                {item.guessOptions.map((opt, i) => (
+                                                    <button 
+                                                        key={i} 
+                                                        onClick={() => handleGuessPick(item.id, i)}
+                                                        className="block w-full rounded-lg border border-gray-200 bg-white p-3 text-left text-sm hover:bg-gray-50 transition-colors"
+                                                    >
+                                                        {opt}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Stan 3: Odkryta - Odpowiedzi */}
+                                    {isRevealed && (
+                                        <div className="space-y-4 animate-fade-in text-sm text-gray-700 mt-4">
                                             <p><strong>Odpowiedź:</strong> {item.answer}</p>
                                             
-                                            <div className="flex items-center gap-2 text-green-700 font-medium text-xs">
-                                                <span>✓ Zgadłeś za pierwszym razem — punkt!</span>
-                                            </div>
+                                            {userChoice !== undefined && (
+                                                <div className={`font-medium text-xs ${isCorrect ? 'text-green-700' : 'text-red-600'}`}>
+                                                    {isCorrect 
+                                                        ? '✓ Zgadłeś za pierwszym razem — punkt!' 
+                                                        : '✗ To nie ta odpowiedź — poprawna jest wyżej. Treść i tak została odkryta.'}
+                                                </div>
+                                            )}
                                             
                                             <p className="text-gray-600">{item.explanation}</p>
                                             
@@ -678,7 +833,9 @@ const CuriositiesView = () => {
                                             <p className="text-xs text-gray-500 underline underline-offset-2">Źródło: {item.source}</p>
                                             
                                             <div className="flex gap-2 pt-2">
-                                                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">+1 punkt</span>
+                                                {scoredIds.includes(item.id) && (
+                                                    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">+1 punkt</span>
+                                                )}
                                                 <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-bold">✓ Poznane</span>
                                             </div>
                                         </div>
@@ -689,7 +846,7 @@ const CuriositiesView = () => {
                     })}
                 </div>
 
-                {/* Sekcja blokady Miniquizu końcowego na dole strony */}
+                {/* Sekcja blokady Miniquizu końcowego */}
                 <div className="mt-16 mb-8 border-t border-gray-200 pt-10">
                     <h2 className="text-3xl font-serif font-bold text-gray-900 mb-2">Miniquiz końcowy</h2>
                     <p className="text-gray-600 text-lg">
