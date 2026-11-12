@@ -40,7 +40,7 @@ const HomeView = ({ changeView }) => {
     const [selectedArticle, setSelectedArticle] = useState(null);
 
     useEffect(() => {
-        client.fetch('*[_type == "article"]')
+        client.fetch('*[_type == "article"] | order(_createdAt desc)')
             .then((data) => setArticles(data))
             .catch(console.error);
     }, []);
@@ -53,120 +53,107 @@ const HomeView = ({ changeView }) => {
         }
     }, [selectedArticle]);
 
-    return (
-                <div className="space-y-12 animate-fade-in relative pb-12">
-                    {/* Nowa Główna sekcja (Hero) z tłem lasu - Rozszerzona */}
-                    <div className="relative w-full h-[600px] flex flex-col justify-center px-6 md:px-12 py-16 bg-[#122217] overflow-hidden rounded-3xl shadow-xl">
-                        
-                        {/* TUTAJ WSTAWIASZ TŁO I PRZYCIEMNIENIE */}
-                        <div className="absolute inset-0 bg-[url('/las_main.jpg')] bg-cover bg-center opacity-100"></div>
-                        <div className="absolute inset-0 bg-black/30"></div>
-                        
-                        <div className="relative z-10 max-w-4xl mx-auto w-full text-center md:text-left">
-                            <span className="text-[#d48b48] font-bold tracking-widest text-xs uppercase mb-4 block">
-                                Projekt edukacyjny 2026
-                            </span>
-                            <h1 className="text-5xl md:text-7xl font-serif font-bold text-white leading-tight mb-6">
-                                Zauważ ryzyko, zanim kleszcz zauważy Ciebie
-                            </h1>
-                            <p className="text-xl md:text-2xl text-gray-200 italic font-serif mb-10">
-                                Nie odkładaj – Działaj! Edukujemy uczniów i wspieramy nauczycieli w całej Polsce.
-                            </p>
-                            <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-                                <button 
-                                    onClick={() => changeView('education')} 
-                                    className="bg-[#EFA75D] hover:bg-[#d98b48] text-gray-900 px-8 py-3 rounded-full font-bold transition shadow-lg"
-                                >
-                                    Wejdź do Strefy Edukacji
-                                </button>
-                                <button 
-                                    onClick={() => changeView('competition')} 
-                                    className="bg-transparent border border-gray-400 text-gray-200 px-8 py-3 rounded-full font-bold hover:bg-white/10 hover:border-white transition"
-                                >
-                                    Konkurs na mural
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                
+    const quickLinks = [
+        { id: 'knowledge', name: 'Baza Wiedzy', icon: '📖', color: 'bg-emerald-100 text-emerald-700' },
+        { id: 'curiosities', name: 'Ciekawostki', icon: '🔍', color: 'bg-amber-100 text-amber-700' },
+        { id: 'education', name: 'Strefa Edukacji', icon: '🎓', color: 'bg-blue-100 text-blue-700' },
+        { id: 'map', name: 'Mapa Zachorowań', icon: '🗺️', color: 'bg-rose-100 text-rose-700' },
+        { id: 'simulator', name: 'Symulator', icon: '▶️', color: 'bg-purple-100 text-purple-700' },
+        { id: 'competition', name: 'Konkurs', icon: '🏆', color: 'bg-teal-100 text-teal-700' },
+    ];
 
-            {/* Siatka odnośników na dole pierwszej strony (bez dodawania pustych podstron) */}
-            <section className="mt-16 relative z-20">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {[
-                        { id: 'knowledge', title: 'Baza Wiedzy', desc: 'Najważniejsze informacje o kleszczach i profilaktyce.' },
-                        { id: 'education', title: 'Strefa Edukacji', desc: 'Materiały, komiksy i plakaty dla uczniów.' },
-                        { id: 'teachers', title: 'Dla nauczycieli', desc: 'Konspekty i interaktywne scenariusze lekcji.' },
-                        { id: 'competition', title: 'Konkurs', desc: 'Regulamin i zasady zgłoszeń do konkursu.' },
-                        { id: 'quiz', title: 'Wielki Quiz', desc: 'Sprawdź swoją wiedzę i zdobądź certyfikat.' },
-                        { id: 'survey', title: 'Ankieta', desc: 'Pomóż nam ulepszyć materiały edukacyjne.' }
-                    ].map((item) => (
-                        <div 
-                            key={item.id} 
-                            onClick={() => changeView(item.id)}
-                            className="bg-white rounded-2xl p-8 shadow-sm cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-gray-100"
+    return (
+        <div className="flex flex-col bg-gray-50 pb-12 animate-fade-in">
+            {/* Nowa Główna sekcja (Hero) wzorowana na nowym designie */}
+            <div className="relative w-full h-[500px] flex flex-col justify-center px-6 md:px-12 py-16 bg-[#122217] overflow-hidden rounded-3xl shadow-xl mt-4">
+                <div className="absolute inset-0 bg-[url('/las_main.jpg')] bg-cover bg-center opacity-40"></div>
+                <div className="absolute inset-0 bg-black/30"></div>
+                
+                <div className="relative z-10 max-w-4xl mx-auto w-full text-center md:text-left">
+                    <span className="text-[#d48b48] font-bold tracking-widest text-xs uppercase mb-4 block">
+                        Projekt edukacyjny 2026
+                    </span>
+                    <h1 className="text-4xl md:text-6xl font-serif font-bold text-white leading-tight mb-6">
+                        Zauważ ryzyko, zanim kleszcz zauważy Ciebie
+                    </h1>
+                    <p className="text-lg md:text-xl text-gray-200 italic font-serif mb-10 max-w-2xl">
+                        Edukujemy uczniów, wspieramy nauczycieli i dostarczamy interaktywne narzędzia do walki z chorobami odkleszczowymi.
+                    </p>
+                    <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+                        <button 
+                            onClick={() => changeView('quiz')} 
+                            className="bg-[#EFA75D] hover:bg-[#d98b48] text-gray-900 px-8 py-3 rounded-full font-bold transition shadow-lg"
                         >
-                            <h3 className="text-2xl font-bold font-serif text-[#143B2A] mb-2">{item.title}</h3>
-                            <p className="text-gray-500 text-sm">{item.desc}</p>
+                            Rozwiąż Wielki Quiz
+                        </button>
+                        <button 
+                            onClick={() => changeView('competition')} 
+                            className="bg-transparent border border-gray-400 text-gray-200 px-8 py-3 rounded-full font-bold hover:bg-white/10 hover:border-white transition"
+                        >
+                            Weź udział w konkursie
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Siatka odnośników */}
+            <section className="py-12 px-2 max-w-7xl mx-auto w-full -mt-8 relative z-20">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    {quickLinks.map((link) => (
+                        <div 
+                            key={link.id} 
+                            onClick={() => changeView(link.id)}
+                            className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 flex flex-col items-center text-center gap-3 border border-gray-100 cursor-pointer"
+                        >
+                            <div className={`p-4 rounded-full text-2xl ${link.color}`}>
+                                {link.icon}
+                            </div>
+                            <span className="font-bold text-gray-800 text-sm">{link.name}</span>
                         </div>
                     ))}
                 </div>
             </section>
 
-            {/* Sekcja Aktualności pod odnośnikami */}
-            <section className="pt-12 border-t border-gray-200 mt-16">
-                <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-brand inline-block pb-2">Aktualności leśne</h2>
-                <div className="grid md:grid-cols-3 gap-6">
+            {/* Aktualności z Sanity */}
+            <section className="py-8 px-4 max-w-7xl mx-auto w-full">
+                <h2 className="text-3xl font-bold text-gray-900 mb-8 border-b-2 border-brand inline-block pb-2">Aktualności leśne</h2>
+                <div className="grid md:grid-cols-3 gap-8">
                     {articles.length > 0 ? (
                         articles.map((article) => (
                             <div 
                                 key={article._id} 
                                 onClick={() => setSelectedArticle(article)}
-                                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 cursor-pointer flex flex-col transform hover:-translate-y-1"
+                                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition cursor-pointer flex flex-col group transform hover:-translate-y-1"
                             >
                                 {article.mainImage && (
-                                    <img 
-                                        src={urlFor(article.mainImage).width(400).url()} 
-                                        alt={article.title}
-                                        className="w-full h-48 object-cover rounded-lg mb-4"
-                                    />
+                                    <img src={urlFor(article.mainImage).width(600).height(400).url()} alt={article.title} className="w-full h-48 object-cover group-hover:scale-105 transition duration-500" />
                                 )}
-                                <h3 className="font-bold text-xl mb-2 text-brand-dark">{article.title}</h3>
-                                <p className="text-gray-600 mb-4 text-sm flex-grow">
-                                    {article.content ? article.content.substring(0, 100) + '...' : 'Brak treści...'}
-                                </p>
-                                <span className="text-brand font-bold text-sm mt-auto inline-block">
-                                    Czytaj więcej &rarr;
-                                </span>
+                                <div className="p-6 flex flex-col flex-grow">
+                                    <h3 className="font-bold text-xl mb-3 text-gray-900">{article.title}</h3>
+                                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">{article.content ? article.content.substring(0, 100) + '...' : ''}</p>
+                                    <span className="text-brand font-bold text-sm mt-auto flex items-center gap-1 group-hover:text-brand-dark">
+                                        Czytaj więcej &rarr;
+                                    </span>
+                                </div>
                             </div>
                         ))
                     ) : (
-                        <p className="text-gray-500 italic">Brak nowych wiadomości. Dodaj pierwszy artykuł w panelu!</p>
+                        <p className="text-gray-500 italic col-span-3">Brak nowych wiadomości. Dodaj pierwszy artykuł w panelu Sanity!</p>
                     )}
                 </div>
             </section>
 
-            {/* --- WYSKAKUJĄCE OKIENKO (MODAL) --- */}
+            {/* Modal dla artykułu */}
             {selectedArticle && (
                 <div 
                     className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-sm animate-fade-in"
                     onClick={() => setSelectedArticle(null)}
                 >
-                    <div 
-                        className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto relative flex flex-col"
-                        onClick={(e) => e.stopPropagation()}
-                    >
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto relative flex flex-col" onClick={e => e.stopPropagation()}>
                         {selectedArticle.mainImage && (
                             <div className="relative w-full h-64 sm:h-80 shrink-0">
-                                <img 
-                                    src={urlFor(selectedArticle.mainImage).url()} 
-                                    alt={selectedArticle.title}
-                                    className="w-full h-full object-cover rounded-t-2xl"
-                                />
-                                <button 
-                                    onClick={() => setSelectedArticle(null)}
-                                    className="absolute top-4 right-4 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors duration-300"
-                                >
+                                <img src={urlFor(selectedArticle.mainImage).url()} alt={selectedArticle.title} className="w-full h-full object-cover rounded-t-2xl" />
+                                <button onClick={() => setSelectedArticle(null)} className="absolute top-4 right-4 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors">
                                     <CloseIcon />
                                 </button>
                             </div>
@@ -174,14 +161,10 @@ const HomeView = ({ changeView }) => {
                         <div className="p-8 sm:p-10">
                             {!selectedArticle.mainImage && (
                                 <div className="flex justify-end mb-4">
-                                    <button onClick={() => setSelectedArticle(null)} className="text-gray-400 hover:text-gray-800 transition">
-                                        <CloseIcon />
-                                    </button>
+                                    <button onClick={() => setSelectedArticle(null)} className="text-gray-400 hover:text-gray-800 transition"><CloseIcon /></button>
                                 </div>
                             )}
-                            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-6 leading-tight">
-                                {selectedArticle.title}
-                            </h2>
+                            <h2 className="text-3xl font-extrabold text-gray-800 mb-6">{selectedArticle.title}</h2>
                             <div className="text-gray-700 leading-relaxed whitespace-pre-wrap text-lg">
                                 {selectedArticle.content}
                             </div>
@@ -869,14 +852,15 @@ export default function App() {
         setIsMobileMenuOpen(false);
     }, [currentView]);
 
-    // Zaktualizowana nawigacja – dodano osobną sekcję dla Nauczycieli zgodnie z prośbą
-    const navItems = [
+  const navItems = [
         { id: 'home', label: 'Start' },
         { id: 'knowledge', label: 'Baza Wiedzy' },
+        { id: 'curiosities', label: 'Ciekawostki' },
         { id: 'education', label: 'Strefa Edukacji' },
         { id: 'teachers', label: 'Dla nauczycieli' },
+        { id: 'map', label: 'Mapa' },
+        { id: 'simulator', label: 'Symulator' },
         { id: 'competition', label: 'Konkurs' },
-        { id: 'curiosities', label: 'Ciekawostki' },
         { id: 'quiz', label: 'Quiz' },
     ];
 
@@ -884,11 +868,16 @@ export default function App() {
         switch(currentView) {
             case 'home': return <HomeView changeView={setCurrentView} />;
             case 'knowledge': return <KnowledgeView />;
+            case 'curiosities': return <CuriositiesView />;
             case 'education': return <EducationView />;
             case 'teachers': return <TeachersView />;
+            case 'map': return <MapView />;
+            case 'simulator': return <SimulatorView />;
             case 'competition': return <CompetitionView />;
-            case 'curiosities': return <CuriositiesView />;
             case 'quiz': return <QuizView />;
+            // Dla nowych zakładek, póki nie stworzymy ich komponentów, renderujemy pusty szablon:
+            case 'map': return <div className="p-12 text-center text-xl font-bold">Moduł Mapy w budowie...</div>;
+            case 'simulator': return <div className="p-12 text-center text-xl font-bold">Moduł Symulatora w budowie...</div>;
             default: return <HomeView changeView={setCurrentView} />;
         }
     };
