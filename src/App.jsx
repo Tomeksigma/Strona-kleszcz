@@ -843,24 +843,49 @@ const CuriositiesView = () => {
 };
 // --- WIDOKI NARZĘDZIOWE (MAPA I SYMULATOR) ---
 
+// --- WIDOKI NARZĘDZIOWE (MAPA I SYMULATOR) ---
+
 const MapView = () => {
-    // Zachowujemy symulację danych, aby mapa działała poprawnie
+    // Stan: 'Cała Polska' traktujemy jako domyślny podgląd ogólny
     const [selectedRegion, setSelectedRegion] = useState("Cała Polska");
 
+    // Dane z pliku zachorowania-2024.json 
     const regionData = {
         "Cała Polska": { zachorowania: "29 860", zapadalnosc: "—" },
-        "Mazowieckie": { zachorowania: "3 452", zapadalnosc: "69,8" },
-        "Małopolskie": { zachorowania: "2 100", zapadalnosc: "96,6" },
-        "Śląskie": { zachorowania: "1 850", zapadalnosc: "132,0" },
-        "Pomorskie": { zachorowania: "2 230", zapadalnosc: "91,9" },
+        "Dolnośląskie": { zachorowania: "1566", zapadalnosc: "54.5" },
+        "Kujawsko-pomorskie": { zachorowania: "905", zapadalnosc: "45.5" },
+        "Lubelskie": { zachorowania: "1705", zapadalnosc: "85.1" },
+        "Lubuskie": { zachorowania: "755", zapadalnosc: "77.7" },
+        "Łódzkie": { zachorowania: "1227", zapadalnosc: "52.1" },
+        "Małopolskie": { zachorowania: "4527", zapadalnosc: "132.0" },
+        "Mazowieckie": { zachorowania: "3846", zapadalnosc: "69.8" },
+        "Opolskie": { zachorowania: "681", zapadalnosc: "73.0" },
+        "Podkarpackie": { zachorowania: "1888", zapadalnosc: "91.3" },
+        "Podlaskie": { zachorowania: "1523", zapadalnosc: "134.2" },
+        "Pomorskie": { zachorowania: "2168", zapadalnosc: "91.9" },
+        "Śląskie": { zachorowania: "4159", zapadalnosc: "96.6" },
+        "Świętokrzyskie": { zachorowania: "622", zapadalnosc: "53.5" },
+        "Warmińsko-mazurskie": { zachorowania: "1469", zapadalnosc: "108.5" },
+        "Wielkopolskie": { zachorowania: "1708", zapadalnosc: "49.0" },
+        "Zachodniopomorskie": { zachorowania: "1111", zapadalnosc: "68.3" }
     };
 
     const currentStats = regionData[selectedRegion] || regionData["Cała Polska"];
 
+    // Funkcja helpera do kolorowania według zapadalności
+    const getRiskColor = (incidence) => {
+        if (incidence === "—") return "bg-gray-100 text-gray-800";
+        const val = parseFloat(incidence);
+        if (val < 60) return "bg-[#4ca64c] text-white";
+        if (val < 90) return "bg-[#f0e68c] text-gray-800";
+        if (val < 110) return "bg-[#f4a460] text-gray-900";
+        return "bg-[#cd5c5c] text-white";
+    };
+
     return (
-        <div className="bg-[#F8F9F5] min-h-screen pb-20 animate-fade-in">
+        <div className="bg-[#F8F9F5] pb-20 animate-fade-in w-full">
             {/* Ciemnozielony Header */}
-            <div className="bg-[#0F291E] w-full px-6 md:px-12 py-16 text-white mb-10">
+            <div className="bg-[#0F291E] w-full px-6 md:px-12 py-16 text-white mb-10 rounded-b-3xl">
                 <div className="max-w-7xl mx-auto">
                     <span className="text-[#EFA75D] font-bold tracking-widest text-xs uppercase mb-4 block">
                         INTERAKTYWNA MAPA
@@ -876,8 +901,9 @@ const MapView = () => {
 
             <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-12 gap-6">
                 
-                {/* Lewa kolumna: Mapa i wybór (6 kolumn) */}
+                {/* Lewa kolumna: Wybór i Kafelkowa Mapa (6 kolumn) */}
                 <div className="lg:col-span-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col">
+                    {/* Przyciski filtrów (wizualne z makiety) */}
                     <div className="flex flex-wrap gap-2 mb-6">
                         <button className="bg-[#143B2A] text-white px-4 py-1.5 rounded-full text-sm font-semibold border border-[#143B2A]">Borelioza</button>
                         <button className="bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-semibold border border-gray-200 hover:bg-gray-50">KZM</button>
@@ -891,32 +917,37 @@ const MapView = () => {
                             value={selectedRegion}
                             onChange={(e) => setSelectedRegion(e.target.value)}
                         >
-                            <option value="Cała Polska">Cała Polska</option>
-                            <option value="Mazowieckie">Mazowieckie</option>
-                            <option value="Małopolskie">Małopolskie</option>
-                            <option value="Śląskie">Śląskie</option>
-                            <option value="Pomorskie">Pomorskie</option>
+                            {Object.keys(regionData).map(woj => (
+                                <option key={woj} value={woj}>{woj}</option>
+                            ))}
                         </select>
                         <button 
                             onClick={() => setSelectedRegion("Cała Polska")}
-                            className="bg-white border border-gray-200 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-50"
+                            className="bg-white border border-gray-200 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-50 whitespace-nowrap"
                         >
                             Cała Polska
                         </button>
                     </div>
 
-                    {/* Placeholder na interaktywną mapę SVG */}
-                    <div className="flex-grow flex items-center justify-center bg-[#F8F9F5] rounded-xl border border-gray-100 p-4 min-h-[400px]">
-                        <div className="text-center text-gray-400">
-                            <span className="text-6xl block mb-2">🗺️</span>
-                            <p>Wizualizacja Mapy Polski SVG</p>
-                            <p className="text-sm mt-2 text-gray-500">Wybrano: <strong>{selectedRegion}</strong></p>
+                    {/* Kafelkowa Mapa Województw (Zamiast SVG) */}
+                    <div className="flex-grow flex flex-col items-center justify-center p-4">
+                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 w-full max-w-md mx-auto">
+                            {Object.entries(regionData).filter(([key]) => key !== "Cała Polska").map(([woj, data]) => (
+                                <button
+                                    key={woj}
+                                    onClick={() => setSelectedRegion(woj)}
+                                    className={`aspect-square rounded-xl flex flex-col items-center justify-center text-center p-2 text-xs font-bold transition-transform hover:scale-105 shadow-sm border-2 ${selectedRegion === woj ? 'border-gray-900 shadow-md scale-105' : 'border-transparent'} ${getRiskColor(data.zapadalnosc)}`}
+                                >
+                                    <span className="truncate w-full block mb-1">{woj.substring(0,3).toUpperCase()}</span>
+                                    <span className="text-[10px] font-normal opacity-90">{data.zapadalnosc}</span>
+                                </button>
+                            ))}
                         </div>
                     </div>
 
-                    <div className="mt-6 pt-4 border-t border-gray-100">
+                    <div className="mt-8 pt-4 border-t border-gray-100">
                         <p className="text-sm font-bold text-gray-800 mb-2">Zapadalność na boreliozę (na 100 tys. mieszkańców)</p>
-                        <div className="flex gap-4 text-xs text-gray-600">
+                        <div className="flex flex-wrap gap-4 text-xs text-gray-600">
                             <span className="flex items-center gap-1"><div className="w-3 h-3 bg-[#4ca64c] rounded-sm"></div> &lt; 60</span>
                             <span className="flex items-center gap-1"><div className="w-3 h-3 bg-[#f0e68c] rounded-sm"></div> 60–89,9</span>
                             <span className="flex items-center gap-1"><div className="w-3 h-3 bg-[#f4a460] rounded-sm"></div> 90–109,9</span>
@@ -925,10 +956,10 @@ const MapView = () => {
                     </div>
                 </div>
 
-                {/* Prawa kolumna: Statystyki i boxy edukacyjne (6 kolumn rozdzielone na 2x3 w siatce) */}
+                {/* Prawa kolumna: Statystyki i boxy edukacyjne */}
                 <div className="lg:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                     
-                    {/* Główny box statystyk (zajmuje pełną szerokość połowy) */}
+                    {/* Główny box statystyk */}
                     <div className="md:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                         <span className="text-gray-400 text-xs font-bold uppercase tracking-wider block mb-1">
                             {selectedRegion === "Cała Polska" ? "POLSKA OGÓŁEM" : "WOJEWÓDZTWO"}
@@ -948,12 +979,10 @@ const MapView = () => {
                         <p className="text-[10px] text-gray-500 mt-4 underline underline-offset-2">Rok: 2024 · Źródło: NIZP PZH-PIB / GIS, „Choroby zakaźne i zatrucia w Polsce w 2024 roku”</p>
                     </div>
 
-                    {/* Ostrzeżenie (zajmuje pełną szerokość połowy) */}
                     <div className="md:col-span-2 bg-[#FDF6E3] border border-[#F5E6C4] p-6 rounded-2xl text-sm text-gray-800">
                         Mapa nie pokazuje liczby kleszczy — brak jednolitych pomiarów. Wysoka zapadalność nie oznacza, że w danym województwie jest najwięcej kleszczy, ani nie określa Twojego indywidualnego ryzyka. Kleszcze występują w całej Polsce.
                     </div>
 
-                    {/* 4 Informacyjne Boxy */}
                     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                         <h3 className="font-bold text-[#143B2A] mb-3">Typowe siedliska kleszczy</h3>
                         <p className="text-sm text-gray-600">Lasy liściaste i mieszane, obrzeża lasów, zarośla, łąki, wysokie trawy, parki i ogrody — głównie niska roślinność.</p>
@@ -984,154 +1013,175 @@ const MapView = () => {
     );
 };
 
+// SYMULATOR (W oparciu o przesłany zrzut ekranu)
 const SimulatorView = () => {
-    const [currentStep, setCurrentStep] = useState(0);
-    const [selectedOption, setSelectedOption] = useState(null);
+    const [selectedItems, setSelectedItems] = useState([]);
     const [isFinished, setIsFinished] = useState(false);
-    const [score, setScore] = useState(0);
-
-    const scenarios = [
-        {
-            question: "Wybierasz się do lasu. Jak się ubierasz?",
-            options: [
-                { text: "Krótkie spodenki i sandały (jest gorąco!)", correct: false, feedback: "Narażasz odsłoniętą skórę na bezpośredni kontakt z kleszczami." },
-                { text: "Długie, jasne spodnie, skarpetki naciągnięte na nogawki", correct: true, feedback: "Świetnie! Jasny kolor ułatwi dostrzeżenie kleszcza, a zakryte nogi utrudnią mu dostęp." },
-                { text: "Ciemny dres z krótkim rękawem", correct: false, feedback: "Na ciemnym ubraniu trudniej zauważyć kleszcza, a krótkie rękawy to ryzyko." }
-            ]
-        },
-        {
-            question: "Co zabierasz ze sobą do plecaka?",
-            options: [
-                { text: "Tylko butelkę wody", correct: false, feedback: "Woda jest ważna, ale zapomniałeś o ochronie chemicznej!" },
-                { text: "Repelent z DEET lub Ikarydyną", correct: true, feedback: "Idealnie! Repelent to podstawa zabezpieczenia przed spacerem." },
-                { text: "Krem z wysokim filtrem UV", correct: false, feedback: "Krem UV jest ważny latem, ale nie uchroni Cię przed pajęczakami." }
-            ]
-        },
-        {
-            question: "Wracasz z lasu do domu. Co robisz jako pierwsze?",
-            options: [
-                { text: "Kładę się na łóżku, żeby odpocząć", correct: false, feedback: "Kleszcz może przejść na pościel lub znaleźć na tobie miejsce do wkłucia!" },
-                { text: "Piję gorącą herbatę", correct: false, feedback: "Herbata to świetny pomysł, ale dopiero po przebraniu się i umyciu." },
-                { text: "Biorę prysznic i dokładnie sprawdzam całe ciało", correct: true, feedback: "Wzorowo! Szybki prysznic zmyje luźne kleszcze, a lustracja pozwoli usunąć te, które się wbiły." }
-            ]
-        }
+    
+    // Dane ekwipunku z makiety (5 dobrych i 3 złe opcje)
+    const equipmentOptions = [
+        { id: 'kapelusz', label: 'Kapelusz (Głowa)', type: 'good' },
+        { id: 'bluza', label: 'Jasna bluza z długim rękawem (Tułów)', type: 'good' },
+        { id: 'koszulka', label: 'Koszulka na ramiączkach (Tułów)', type: 'bad' },
+        { id: 'spodnie', label: 'Długie spodnie (Nogi)', type: 'good' },
+        { id: 'krotkie', label: 'Krótkie spodenki (Nogi)', type: 'bad' },
+        { id: 'skarpety', label: 'Nogawki w skarpetach (Kostki)', type: 'good' },
+        { id: 'buty', label: 'Pełne buty terenowe (Stopy)', type: 'good' },
+        { id: 'sandaly', label: 'Sandały (Stopy)', type: 'bad' },
     ];
 
-    const currentScenario = scenarios[currentStep];
-
-    const handleSelect = (idx) => {
-        if (selectedOption !== null) return;
-        setSelectedOption(idx);
-        if (currentScenario.options[idx].correct) setScore(s => s + 1);
-    };
-
-    const nextStep = () => {
-        if (currentStep < scenarios.length - 1) {
-            setCurrentStep(c => c + 1);
-            setSelectedOption(null);
+    const toggleItem = (id) => {
+        if(selectedItems.includes(id)){
+            setSelectedItems(selectedItems.filter(item => item !== id));
         } else {
-            setIsFinished(true);
+            // Logika "wzajemnie wykluczających się" ubrań (nie można mieć jednocześnie długich i krótkich spodni)
+            const currentItem = equipmentOptions.find(opt => opt.id === id);
+            
+            let newItems = [...selectedItems];
+            if(currentItem.label.includes('Tułów')){
+                newItems = newItems.filter(item => !equipmentOptions.find(opt => opt.id === item).label.includes('Tułów'));
+            }
+            if(currentItem.label.includes('Nogi')){
+                newItems = newItems.filter(item => !equipmentOptions.find(opt => opt.id === item).label.includes('Nogi'));
+            }
+            if(currentItem.label.includes('Stopy')){
+                newItems = newItems.filter(item => !equipmentOptions.find(opt => opt.id === item).label.includes('Stopy'));
+            }
+
+            setSelectedItems([...newItems, id]);
         }
     };
 
-    const restart = () => {
-        setCurrentStep(0);
-        setSelectedOption(null);
+    const resetSimulator = () => {
+        setSelectedItems([]);
         setIsFinished(false);
-        setScore(0);
     };
 
+    const checkScore = () => {
+        setIsFinished(true);
+    };
+
+    const goodItemsSelected = selectedItems.filter(id => equipmentOptions.find(opt => opt.id === id).type === 'good').length;
+
     return (
-        <div className="container mx-auto px-4 py-12 max-w-4xl animate-fade-in">
-            <div className="text-center mb-10">
-                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">▶️</div>
-                <h1 className="text-4xl font-serif font-bold text-[#122217] mb-2">Symulator Spaceru</h1>
-                <p className="text-gray-600">Podejmij właściwe decyzje i sprawdź, czy jesteś gotowy na bezpieczny spacer po lesie.</p>
+        <div className="bg-[#F8F9F5] pb-20 animate-fade-in w-full min-h-screen">
+            {/* Ciemnozielony Header z makiety */}
+            <div className="bg-[#0F291E] w-full px-6 md:px-12 py-16 text-white mb-10 rounded-b-3xl">
+                <div className="max-w-5xl mx-auto">
+                    <span className="text-[#EFA75D] font-bold tracking-widest text-xs uppercase mb-4 block">
+                        SYMULATOR
+                    </span>
+                    <h1 className="text-4xl md:text-5xl font-serif font-bold leading-tight mb-4">
+                        Co zrobisz w tej sytuacji?
+                    </h1>
+                    <p className="text-gray-300 text-lg max-w-2xl">
+                        Wybierz odpowiedź — od razu zobaczysz wyjaśnienie. Symulator nie służy do diagnozy.
+                    </p>
+                </div>
             </div>
 
-            {!isFinished ? (
-                <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-                    <div className="h-2 w-full bg-gray-100">
-                        <div 
-                            className="h-full bg-purple-500 transition-all duration-500" 
-                            style={{ width: `${((currentStep) / scenarios.length) * 100}%` }}
-                        />
-                    </div>
+            <div className="max-w-5xl mx-auto px-4">
+                <h2 className="text-3xl font-serif font-bold text-[#143B2A] mb-2">Ubierz leśnika na praktyki</h2>
+                <p className="text-gray-600 mb-8">Zaznacz odpowiednie elementy ubioru na wyprawę do lasu.</p>
+
+                <div className="grid md:grid-cols-12 gap-8">
                     
-                    <div className="p-8 md:p-12">
-                        <div className="mb-4 text-sm font-bold text-purple-600 uppercase tracking-widest">
-                            Krok {currentStep + 1} z {scenarios.length}
-                        </div>
-                        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8 leading-tight">
-                            {currentScenario.question}
-                        </h2>
-
-                        <div className="space-y-4">
-                            {currentScenario.options.map((option, idx) => {
-                                const isSelected = selectedOption === idx;
-                                const isCorrect = option.correct;
-                                const showResult = selectedOption !== null;
-                                
-                                let btnStyle = "bg-white border-2 border-gray-200 hover:border-purple-300 text-gray-700";
-                                if (showResult) {
-                                    if (isCorrect) btnStyle = "bg-green-50 border-2 border-green-500 text-green-900";
-                                    else if (isSelected) btnStyle = "bg-red-50 border-2 border-red-500 text-red-900";
-                                    else btnStyle = "bg-gray-50 border-2 border-gray-200 text-gray-400 opacity-50";
-                                }
-
-                                return (
-                                    <button
-                                        key={idx}
-                                        onClick={() => handleSelect(idx)}
-                                        disabled={showResult}
-                                        className={`w-full p-5 rounded-xl text-left font-medium transition-all duration-300 ${btnStyle}`}
-                                    >
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-lg">{option.text}</span>
-                                            {showResult && isCorrect && <span className="text-green-600 text-2xl">✓</span>}
-                                            {showResult && isSelected && !isCorrect && <span className="text-red-600 text-2xl">✗</span>}
-                                        </div>
-                                        {showResult && (isSelected || isCorrect) && (
-                                            <div className={`mt-3 pt-3 border-t text-sm ${isCorrect ? 'border-green-200 text-green-800' : 'border-red-200 text-red-800'}`}>
-                                                {option.feedback}
-                                            </div>
-                                        )}
-                                    </button>
-                                );
-                            })}
-                        </div>
-
-                        {selectedOption !== null && (
-                            <div className="mt-8 flex justify-end animate-fade-in">
-                                <button 
-                                    onClick={nextStep}
-                                    className="bg-purple-600 hover:bg-purple-700 text-white rounded-full px-8 py-4 font-bold shadow-lg transition-transform hover:scale-105"
-                                >
-                                    {currentStep < scenarios.length - 1 ? 'Kolejny krok &rarr;' : 'Zakończ spacer'} 
-                                </button>
+                    {/* Wizualizacja postaci (Zamiast przeciągania) */}
+                    <div className="md:col-span-5 bg-white border border-gray-200 border-dashed rounded-3xl p-8 flex flex-col items-center justify-center min-h-[400px]">
+                        {/* Prosty avatar leśnika w kształcie piktogramu */}
+                        <div className="relative w-32 h-64 flex flex-col items-center">
+                            {/* Głowa */}
+                            <div className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl transition-colors duration-300 z-10 ${selectedItems.includes('kapelusz') ? 'bg-[#4ca64c]' : 'bg-[#e5d565]'}`}>
+                                🙂
                             </div>
-                        )}
+                            
+                            {/* Tułów i Ręce */}
+                            <div className="flex gap-1 mt-1 z-0">
+                                {/* Lewa ręka */}
+                                <div className={`w-6 h-24 rounded-full transition-colors duration-300 ${selectedItems.includes('bluza') ? 'bg-[#4ca64c]' : 'bg-[#e5d565]'}`}></div>
+                                {/* Tułów */}
+                                <div className={`w-16 h-28 rounded-xl transition-colors duration-300 ${selectedItems.includes('bluza') ? 'bg-[#4ca64c]' : selectedItems.includes('koszulka') ? 'bg-red-400' : 'bg-[#e5d565]'}`}></div>
+                                {/* Prawa ręka */}
+                                <div className={`w-6 h-24 rounded-full transition-colors duration-300 ${selectedItems.includes('bluza') ? 'bg-[#4ca64c]' : 'bg-[#e5d565]'}`}></div>
+                            </div>
+                            
+                            {/* Nogi */}
+                            <div className="flex gap-2 -mt-2 z-0">
+                                <div className={`w-6 h-32 rounded-full transition-colors duration-300 ${selectedItems.includes('spodnie') ? 'bg-[#4ca64c]' : selectedItems.includes('krotkie') ? 'bg-red-400' : 'bg-[#e5d565]'}`}></div>
+                                <div className={`w-6 h-32 rounded-full transition-colors duration-300 ${selectedItems.includes('spodnie') ? 'bg-[#4ca64c]' : selectedItems.includes('krotkie') ? 'bg-red-400' : 'bg-[#e5d565]'}`}></div>
+                            </div>
+
+                            {/* Ochrona wokół nóg dla skarpet */}
+                            {selectedItems.includes('skarpety') && (
+                                <div className="absolute bottom-6 w-16 h-8 border-4 border-dashed border-[#143B2A] rounded-lg"></div>
+                            )}
+
+                             {/* Buty */}
+                            <div className="flex gap-2 -mt-4 z-10">
+                                <div className={`w-8 h-6 rounded-b-xl transition-colors duration-300 ${selectedItems.includes('buty') ? 'bg-[#143B2A]' : selectedItems.includes('sandaly') ? 'bg-red-700' : 'bg-transparent'}`}></div>
+                                <div className={`w-8 h-6 rounded-b-xl transition-colors duration-300 ${selectedItems.includes('buty') ? 'bg-[#143B2A]' : selectedItems.includes('sandaly') ? 'bg-red-700' : 'bg-transparent'}`}></div>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 text-center text-sm font-bold text-[#143B2A]">
+                            Dobrze dobrane elementy: {goodItemsSelected}/5
+                        </div>
+                    </div>
+
+                    {/* Przyciski ekwipunku */}
+                    <div className="md:col-span-7 flex flex-col justify-center">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                            {equipmentOptions.map(option => (
+                                <button
+                                    key={option.id}
+                                    onClick={() => toggleItem(option.id)}
+                                    disabled={isFinished}
+                                    className={`p-4 text-left rounded-xl border transition-all duration-200 ${
+                                        selectedItems.includes(option.id) 
+                                            ? isFinished 
+                                                ? option.type === 'good' 
+                                                    ? 'bg-green-50 border-green-500 text-green-900' 
+                                                    : 'bg-red-50 border-red-500 text-red-900'
+                                                : 'bg-[#F0F4EC] border-[#143B2A] text-[#143B2A] shadow-md transform scale-[1.02]' 
+                                            : 'bg-white border-gray-200 text-gray-700 hover:border-[#143B2A]'
+                                    }`}
+                                >
+                                    <span className="block text-[10px] text-gray-500 uppercase font-bold mb-1">
+                                        {option.label.split(' (')[1].replace(')', '')}
+                                    </span>
+                                    <span className="block font-medium">{option.label.split(' (')[0]}</span>
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="flex gap-4">
+                            {!isFinished ? (
+                                <button 
+                                    onClick={checkScore}
+                                    disabled={selectedItems.length === 0}
+                                    className="bg-[#143B2A] text-white px-8 py-3 rounded-full font-bold hover:bg-green-900 transition disabled:opacity-50"
+                                >
+                                    Sprawdź zestaw
+                                </button>
+                            ) : (
+                                <div className="flex flex-col gap-4 w-full">
+                                    <div className={`p-4 rounded-xl text-center font-bold ${goodItemsSelected === 5 && selectedItems.length === 5 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                        {goodItemsSelected === 5 && selectedItems.length === 5 
+                                            ? "Perfekcyjnie! Kleszcze nie mają szans przedrzeć się przez taką osłonę." 
+                                            : "Niestety, leśnik jest narażony na ugryzienia. Pamiętaj: długie, jasne ubrania, pełne buty i nogawki w skarpetach to podstawa!"}
+                                    </div>
+                                    <button 
+                                        onClick={resetSimulator}
+                                        className="bg-[#F8F9F5] border border-gray-300 text-gray-700 px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition w-max"
+                                    >
+                                        Zacznij od nowa
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
-            ) : (
-                <div className="bg-white rounded-2xl shadow-xl border border-gray-100 text-center p-12">
-                    <div className="w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-6 text-5xl">
-                        {score === scenarios.length ? '🏆' : '⚠️'}
-                    </div>
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Podsumowanie Spaceru</h2>
-                    <div className="text-6xl font-black text-purple-600 mb-6">
-                        {score} / {scenarios.length}
-                    </div>
-                    <p className="text-xl text-gray-600 mb-10 max-w-lg mx-auto">
-                        {score === scenarios.length 
-                            ? "Jesteś idealnie przygotowany! Złote zasady profilaktyki masz w małym palcu." 
-                            : "Udało Ci się wrócić, ale popełniłeś kilka błędów. Pamiętaj o ubiorze, repelentach i oględzinach ciała!"}
-                    </p>
-                    <button onClick={restart} className="bg-gray-900 text-white rounded-full px-8 py-4 font-bold hover:bg-gray-800 transition">
-                        Spróbuj ponownie
-                    </button>
-                </div>
-            )}
+            </div>
         </div>
     );
 };
