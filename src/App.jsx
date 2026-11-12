@@ -844,98 +844,140 @@ const CuriositiesView = () => {
 // --- WIDOKI NARZĘDZIOWE (MAPA I SYMULATOR) ---
 
 const MapView = () => {
-    const [selectedRegion, setSelectedRegion] = useState(null);
+    // Zachowujemy symulację danych, aby mapa działała poprawnie
+    const [selectedRegion, setSelectedRegion] = useState("Cała Polska");
 
-    // Symulacja danych z pliku zachorowania-2024.json
     const regionData = {
-        "Mazowieckie": { borelioza: 3452, kzm: 18, risk: "Wysoki" },
-        "Małopolskie": { borelioza: 2100, kzm: 25, risk: "Bardzo Wysoki" },
-        "Śląskie": { borelioza: 1850, kzm: 12, risk: "Średni" },
-        "Podlaskie": { borelioza: 1640, kzm: 85, risk: "Ekstremalny" },
-        "Pomorskie": { borelioza: 2230, kzm: 14, risk: "Wysoki" },
-        "Domyślne": { borelioza: "brak dokładnych danych", kzm: "brak", risk: "Nieznany" }
+        "Cała Polska": { zachorowania: "29 860", zapadalnosc: "—" },
+        "Mazowieckie": { zachorowania: "3 452", zapadalnosc: "69,8" },
+        "Małopolskie": { zachorowania: "2 100", zapadalnosc: "96,6" },
+        "Śląskie": { zachorowania: "1 850", zapadalnosc: "132,0" },
+        "Pomorskie": { zachorowania: "2 230", zapadalnosc: "91,9" },
     };
 
-    const regions = ["Mazowieckie", "Małopolskie", "Śląskie", "Podlaskie", "Pomorskie", "Wielkopolskie", "Dolnośląskie"];
-
-    const currentStats = selectedRegion && regionData[selectedRegion] ? regionData[selectedRegion] : regionData["Domyślne"];
+    const currentStats = regionData[selectedRegion] || regionData["Cała Polska"];
 
     return (
-        <div className="space-y-8 animate-fade-in max-w-6xl mx-auto px-4 py-8">
-            <div className="text-center mb-12">
-                <span className="bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-sm font-bold tracking-wide border border-rose-200">
-                    Aktualizowane na rok 2024
-                </span>
-                <h1 className="text-4xl md:text-5xl font-serif font-bold text-[#122217] mt-6 mb-4">
-                    Mapa Zachorowań Odkleszczowych
-                </h1>
-                <p className="text-gray-600 max-w-2xl mx-auto">
-                    Wybierz województwo, aby sprawdzić poziom zagrożenia. Pamiętaj, że kleszcze występują w całej Polsce, niezależnie od regionu.
-                </p>
+        <div className="bg-[#F8F9F5] min-h-screen pb-20 animate-fade-in">
+            {/* Ciemnozielony Header */}
+            <div className="bg-[#0F291E] w-full px-6 md:px-12 py-16 text-white mb-10">
+                <div className="max-w-7xl mx-auto">
+                    <span className="text-[#EFA75D] font-bold tracking-widest text-xs uppercase mb-4 block">
+                        INTERAKTYWNA MAPA
+                    </span>
+                    <h1 className="text-4xl md:text-6xl font-serif font-bold leading-tight mb-4">
+                        Zauważ ryzyko, zanim kleszcz zauważy Ciebie
+                    </h1>
+                    <p className="text-gray-300 text-lg max-w-2xl">
+                        Zachorowania na boreliozę w województwach w 2024 r. Mapa pokazuje zachorowania ludzi, a nie liczbę kleszczy.
+                    </p>
+                </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
-                {/* Interaktywna lista województw (zamiast pliku SVG wojewodztwa-granice.json) */}
-                <div className="md:col-span-2 bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-                    <h3 className="text-2xl font-bold text-gray-800 mb-6">Wybierz region</h3>
-                    <div className="flex flex-wrap gap-3">
-                        {regions.map(woj => (
-                            <button
-                                key={woj}
-                                onClick={() => setSelectedRegion(woj)}
-                                className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 border ${
-                                    selectedRegion === woj
-                                        ? "bg-rose-500 text-white border-rose-500 shadow-md transform scale-105"
-                                        : "bg-gray-50 text-gray-700 hover:border-rose-300 hover:bg-rose-50"
-                                }`}
-                            >
-                                {woj}
-                            </button>
-                        ))}
+            <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-12 gap-6">
+                
+                {/* Lewa kolumna: Mapa i wybór (6 kolumn) */}
+                <div className="lg:col-span-6 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col">
+                    <div className="flex flex-wrap gap-2 mb-6">
+                        <button className="bg-[#143B2A] text-white px-4 py-1.5 rounded-full text-sm font-semibold border border-[#143B2A]">Borelioza</button>
+                        <button className="bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-semibold border border-gray-200 hover:bg-gray-50">KZM</button>
+                        <button className="bg-[#F0F4EC] text-[#143B2A] px-4 py-1.5 rounded-full text-sm font-semibold border border-[#D5E3C8]">Zapadalność /100 tys.</button>
+                        <button className="bg-white text-gray-600 px-4 py-1.5 rounded-full text-sm font-semibold border border-gray-200 hover:bg-gray-50">Liczba zachorowań</button>
+                    </div>
+
+                    <div className="flex gap-4 mb-8">
+                        <select 
+                            className="flex-1 bg-white border border-gray-200 text-gray-700 py-2 px-4 rounded-lg focus:outline-none focus:border-brand appearance-none"
+                            value={selectedRegion}
+                            onChange={(e) => setSelectedRegion(e.target.value)}
+                        >
+                            <option value="Cała Polska">Cała Polska</option>
+                            <option value="Mazowieckie">Mazowieckie</option>
+                            <option value="Małopolskie">Małopolskie</option>
+                            <option value="Śląskie">Śląskie</option>
+                            <option value="Pomorskie">Pomorskie</option>
+                        </select>
+                        <button 
+                            onClick={() => setSelectedRegion("Cała Polska")}
+                            className="bg-white border border-gray-200 text-gray-700 py-2 px-6 rounded-lg hover:bg-gray-50"
+                        >
+                            Cała Polska
+                        </button>
+                    </div>
+
+                    {/* Placeholder na interaktywną mapę SVG */}
+                    <div className="flex-grow flex items-center justify-center bg-[#F8F9F5] rounded-xl border border-gray-100 p-4 min-h-[400px]">
+                        <div className="text-center text-gray-400">
+                            <span className="text-6xl block mb-2">🗺️</span>
+                            <p>Wizualizacja Mapy Polski SVG</p>
+                            <p className="text-sm mt-2 text-gray-500">Wybrano: <strong>{selectedRegion}</strong></p>
+                        </div>
+                    </div>
+
+                    <div className="mt-6 pt-4 border-t border-gray-100">
+                        <p className="text-sm font-bold text-gray-800 mb-2">Zapadalność na boreliozę (na 100 tys. mieszkańców)</p>
+                        <div className="flex gap-4 text-xs text-gray-600">
+                            <span className="flex items-center gap-1"><div className="w-3 h-3 bg-[#4ca64c] rounded-sm"></div> &lt; 60</span>
+                            <span className="flex items-center gap-1"><div className="w-3 h-3 bg-[#f0e68c] rounded-sm"></div> 60–89,9</span>
+                            <span className="flex items-center gap-1"><div className="w-3 h-3 bg-[#f4a460] rounded-sm"></div> 90–109,9</span>
+                            <span className="flex items-center gap-1"><div className="w-3 h-3 bg-[#cd5c5c] rounded-sm"></div> &ge; 110</span>
+                        </div>
                     </div>
                 </div>
 
-                {/* Panel statystyk */}
-                <div className="bg-[#122217] rounded-2xl shadow-lg overflow-hidden flex flex-col">
-                    <div className="p-6 border-b border-white/10">
-                        <h3 className="text-2xl font-serif font-bold text-white">
-                            {selectedRegion || "Wybierz region"}
-                        </h3>
-                        <p className="text-gray-400 text-sm mt-1">
-                            {selectedRegion ? "Szczegółowe dane statystyczne" : "Kliknij województwo na liście"}
-                        </p>
+                {/* Prawa kolumna: Statystyki i boxy edukacyjne (6 kolumn rozdzielone na 2x3 w siatce) */}
+                <div className="lg:col-span-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    {/* Główny box statystyk (zajmuje pełną szerokość połowy) */}
+                    <div className="md:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                        <span className="text-gray-400 text-xs font-bold uppercase tracking-wider block mb-1">
+                            {selectedRegion === "Cała Polska" ? "POLSKA OGÓŁEM" : "WOJEWÓDZTWO"}
+                        </span>
+                        <h2 className="text-3xl font-serif font-bold text-[#143B2A] mb-6">{selectedRegion}</h2>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-[#EAECE1] p-4 rounded-xl">
+                                <p className="text-gray-600 text-xs mb-1">Zachorowania</p>
+                                <p className="text-2xl font-bold text-gray-900">{currentStats.zachorowania}</p>
+                            </div>
+                            <div className="bg-[#EAECE1] p-4 rounded-xl">
+                                <p className="text-gray-600 text-xs mb-1">Zapadalność /100 tys.</p>
+                                <p className="text-2xl font-bold text-gray-900">{currentStats.zapadalnosc}</p>
+                            </div>
+                        </div>
+                        <p className="text-[10px] text-gray-500 mt-4 underline underline-offset-2">Rok: 2024 · Źródło: NIZP PZH-PIB / GIS, „Choroby zakaźne i zatrucia w Polsce w 2024 roku”</p>
+                    </div>
+
+                    {/* Ostrzeżenie (zajmuje pełną szerokość połowy) */}
+                    <div className="md:col-span-2 bg-[#FDF6E3] border border-[#F5E6C4] p-6 rounded-2xl text-sm text-gray-800">
+                        Mapa nie pokazuje liczby kleszczy — brak jednolitych pomiarów. Wysoka zapadalność nie oznacza, że w danym województwie jest najwięcej kleszczy, ani nie określa Twojego indywidualnego ryzyka. Kleszcze występują w całej Polsce.
+                    </div>
+
+                    {/* 4 Informacyjne Boxy */}
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                        <h3 className="font-bold text-[#143B2A] mb-3">Typowe siedliska kleszczy</h3>
+                        <p className="text-sm text-gray-600">Lasy liściaste i mieszane, obrzeża lasów, zarośla, łąki, wysokie trawy, parki i ogrody — głównie niska roślinność.</p>
                     </div>
                     
-                    <div className="p-6 space-y-6 flex-grow bg-white">
-                        {selectedRegion ? (
-                            <>
-                                <div className="bg-orange-50 p-4 rounded-xl border border-orange-100 flex justify-between items-center">
-                                    <div>
-                                        <p className="text-sm text-gray-600 font-medium">Borelioza</p>
-                                        <p className="text-3xl font-bold text-gray-900">{currentStats.borelioza}</p>
-                                    </div>
-                                    <span className="text-4xl">🦠</span>
-                                </div>
-                                <div className="bg-purple-50 p-4 rounded-xl border border-purple-100 flex justify-between items-center">
-                                    <div>
-                                        <p className="text-sm text-gray-600 font-medium">KZM</p>
-                                        <p className="text-3xl font-bold text-gray-900">{currentStats.kzm}</p>
-                                    </div>
-                                    <span className="text-4xl">🧠</span>
-                                </div>
-                                <div className="pt-4 border-t border-gray-100">
-                                    <p className="text-sm text-gray-500 mb-2">Poziom zagrożenia:</p>
-                                    <span className="px-4 py-1.5 bg-red-100 text-red-800 text-sm font-bold rounded-full uppercase tracking-wider">
-                                        {currentStats.risk}
-                                    </span>
-                                </div>
-                            </>
-                        ) : (
-                            <div className="h-full flex items-center justify-center text-gray-400 text-center py-12">
-                                Wybierz województwo, aby wyświetlić statystyki zgłoszeń.
-                            </div>
-                        )}
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                        <h3 className="font-bold text-[#143B2A] mb-3">Profilaktyka</h3>
+                        <ul className="text-sm text-gray-600 space-y-2 list-disc pl-4">
+                            <li>Długie spodnie i rękawy, pełne obuwie, nogawki w skarpety.</li>
+                            <li>Repelent z DEET, ikarydyną lub IR3535 zgodnie z etykietą.</li>
+                            <li>Jasna odzież ułatwia zauważenie kleszcza.</li>
+                        </ul>
                     </div>
+                    
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                        <h3 className="font-bold text-[#143B2A] mb-3">Sprawdź skórę po powrocie</h3>
+                        <p className="text-sm text-gray-600">Głowa i okolice uszu, pachy, pachwiny, zgięcia kolan, pas i pępek, plecy. Sprawdź też odzież i plecak.</p>
+                    </div>
+                    
+                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                        <h3 className="font-bold text-[#143B2A] mb-3">Szczepienie przeciw KZM</h3>
+                        <p className="text-sm text-gray-600">Skuteczne szczepionki chronią przed KZM, ale nie przed boreliozą. Schemat podstawowy to zwykle 3 dawki i dawki przypominające.</p>
+                    </div>
+
                 </div>
             </div>
         </div>
