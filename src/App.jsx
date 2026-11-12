@@ -841,6 +841,258 @@ const CuriositiesView = () => {
         </div>
     );
 };
+// --- WIDOKI NARZĘDZIOWE (MAPA I SYMULATOR) ---
+
+const MapView = () => {
+    const [selectedRegion, setSelectedRegion] = useState(null);
+
+    // Symulacja danych z pliku zachorowania-2024.json
+    const regionData = {
+        "Mazowieckie": { borelioza: 3452, kzm: 18, risk: "Wysoki" },
+        "Małopolskie": { borelioza: 2100, kzm: 25, risk: "Bardzo Wysoki" },
+        "Śląskie": { borelioza: 1850, kzm: 12, risk: "Średni" },
+        "Podlaskie": { borelioza: 1640, kzm: 85, risk: "Ekstremalny" },
+        "Pomorskie": { borelioza: 2230, kzm: 14, risk: "Wysoki" },
+        "Domyślne": { borelioza: "brak dokładnych danych", kzm: "brak", risk: "Nieznany" }
+    };
+
+    const regions = ["Mazowieckie", "Małopolskie", "Śląskie", "Podlaskie", "Pomorskie", "Wielkopolskie", "Dolnośląskie"];
+
+    const currentStats = selectedRegion && regionData[selectedRegion] ? regionData[selectedRegion] : regionData["Domyślne"];
+
+    return (
+        <div className="space-y-8 animate-fade-in max-w-6xl mx-auto px-4 py-8">
+            <div className="text-center mb-12">
+                <span className="bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-sm font-bold tracking-wide border border-rose-200">
+                    Aktualizowane na rok 2024
+                </span>
+                <h1 className="text-4xl md:text-5xl font-serif font-bold text-[#122217] mt-6 mb-4">
+                    Mapa Zachorowań Odkleszczowych
+                </h1>
+                <p className="text-gray-600 max-w-2xl mx-auto">
+                    Wybierz województwo, aby sprawdzić poziom zagrożenia. Pamiętaj, że kleszcze występują w całej Polsce, niezależnie od regionu.
+                </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+                {/* Interaktywna lista województw (zamiast pliku SVG wojewodztwa-granice.json) */}
+                <div className="md:col-span-2 bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                    <h3 className="text-2xl font-bold text-gray-800 mb-6">Wybierz region</h3>
+                    <div className="flex flex-wrap gap-3">
+                        {regions.map(woj => (
+                            <button
+                                key={woj}
+                                onClick={() => setSelectedRegion(woj)}
+                                className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 border ${
+                                    selectedRegion === woj
+                                        ? "bg-rose-500 text-white border-rose-500 shadow-md transform scale-105"
+                                        : "bg-gray-50 text-gray-700 hover:border-rose-300 hover:bg-rose-50"
+                                }`}
+                            >
+                                {woj}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Panel statystyk */}
+                <div className="bg-[#122217] rounded-2xl shadow-lg overflow-hidden flex flex-col">
+                    <div className="p-6 border-b border-white/10">
+                        <h3 className="text-2xl font-serif font-bold text-white">
+                            {selectedRegion || "Wybierz region"}
+                        </h3>
+                        <p className="text-gray-400 text-sm mt-1">
+                            {selectedRegion ? "Szczegółowe dane statystyczne" : "Kliknij województwo na liście"}
+                        </p>
+                    </div>
+                    
+                    <div className="p-6 space-y-6 flex-grow bg-white">
+                        {selectedRegion ? (
+                            <>
+                                <div className="bg-orange-50 p-4 rounded-xl border border-orange-100 flex justify-between items-center">
+                                    <div>
+                                        <p className="text-sm text-gray-600 font-medium">Borelioza</p>
+                                        <p className="text-3xl font-bold text-gray-900">{currentStats.borelioza}</p>
+                                    </div>
+                                    <span className="text-4xl">🦠</span>
+                                </div>
+                                <div className="bg-purple-50 p-4 rounded-xl border border-purple-100 flex justify-between items-center">
+                                    <div>
+                                        <p className="text-sm text-gray-600 font-medium">KZM</p>
+                                        <p className="text-3xl font-bold text-gray-900">{currentStats.kzm}</p>
+                                    </div>
+                                    <span className="text-4xl">🧠</span>
+                                </div>
+                                <div className="pt-4 border-t border-gray-100">
+                                    <p className="text-sm text-gray-500 mb-2">Poziom zagrożenia:</p>
+                                    <span className="px-4 py-1.5 bg-red-100 text-red-800 text-sm font-bold rounded-full uppercase tracking-wider">
+                                        {currentStats.risk}
+                                    </span>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="h-full flex items-center justify-center text-gray-400 text-center py-12">
+                                Wybierz województwo, aby wyświetlić statystyki zgłoszeń.
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const SimulatorView = () => {
+    const [currentStep, setCurrentStep] = useState(0);
+    const [selectedOption, setSelectedOption] = useState(null);
+    const [isFinished, setIsFinished] = useState(false);
+    const [score, setScore] = useState(0);
+
+    const scenarios = [
+        {
+            question: "Wybierasz się do lasu. Jak się ubierasz?",
+            options: [
+                { text: "Krótkie spodenki i sandały (jest gorąco!)", correct: false, feedback: "Narażasz odsłoniętą skórę na bezpośredni kontakt z kleszczami." },
+                { text: "Długie, jasne spodnie, skarpetki naciągnięte na nogawki", correct: true, feedback: "Świetnie! Jasny kolor ułatwi dostrzeżenie kleszcza, a zakryte nogi utrudnią mu dostęp." },
+                { text: "Ciemny dres z krótkim rękawem", correct: false, feedback: "Na ciemnym ubraniu trudniej zauważyć kleszcza, a krótkie rękawy to ryzyko." }
+            ]
+        },
+        {
+            question: "Co zabierasz ze sobą do plecaka?",
+            options: [
+                { text: "Tylko butelkę wody", correct: false, feedback: "Woda jest ważna, ale zapomniałeś o ochronie chemicznej!" },
+                { text: "Repelent z DEET lub Ikarydyną", correct: true, feedback: "Idealnie! Repelent to podstawa zabezpieczenia przed spacerem." },
+                { text: "Krem z wysokim filtrem UV", correct: false, feedback: "Krem UV jest ważny latem, ale nie uchroni Cię przed pajęczakami." }
+            ]
+        },
+        {
+            question: "Wracasz z lasu do domu. Co robisz jako pierwsze?",
+            options: [
+                { text: "Kładę się na łóżku, żeby odpocząć", correct: false, feedback: "Kleszcz może przejść na pościel lub znaleźć na tobie miejsce do wkłucia!" },
+                { text: "Piję gorącą herbatę", correct: false, feedback: "Herbata to świetny pomysł, ale dopiero po przebraniu się i umyciu." },
+                { text: "Biorę prysznic i dokładnie sprawdzam całe ciało", correct: true, feedback: "Wzorowo! Szybki prysznic zmyje luźne kleszcze, a lustracja pozwoli usunąć te, które się wbiły." }
+            ]
+        }
+    ];
+
+    const currentScenario = scenarios[currentStep];
+
+    const handleSelect = (idx) => {
+        if (selectedOption !== null) return;
+        setSelectedOption(idx);
+        if (currentScenario.options[idx].correct) setScore(s => s + 1);
+    };
+
+    const nextStep = () => {
+        if (currentStep < scenarios.length - 1) {
+            setCurrentStep(c => c + 1);
+            setSelectedOption(null);
+        } else {
+            setIsFinished(true);
+        }
+    };
+
+    const restart = () => {
+        setCurrentStep(0);
+        setSelectedOption(null);
+        setIsFinished(false);
+        setScore(0);
+    };
+
+    return (
+        <div className="container mx-auto px-4 py-12 max-w-4xl animate-fade-in">
+            <div className="text-center mb-10">
+                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">▶️</div>
+                <h1 className="text-4xl font-serif font-bold text-[#122217] mb-2">Symulator Spaceru</h1>
+                <p className="text-gray-600">Podejmij właściwe decyzje i sprawdź, czy jesteś gotowy na bezpieczny spacer po lesie.</p>
+            </div>
+
+            {!isFinished ? (
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+                    <div className="h-2 w-full bg-gray-100">
+                        <div 
+                            className="h-full bg-purple-500 transition-all duration-500" 
+                            style={{ width: `${((currentStep) / scenarios.length) * 100}%` }}
+                        />
+                    </div>
+                    
+                    <div className="p-8 md:p-12">
+                        <div className="mb-4 text-sm font-bold text-purple-600 uppercase tracking-widest">
+                            Krok {currentStep + 1} z {scenarios.length}
+                        </div>
+                        <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8 leading-tight">
+                            {currentScenario.question}
+                        </h2>
+
+                        <div className="space-y-4">
+                            {currentScenario.options.map((option, idx) => {
+                                const isSelected = selectedOption === idx;
+                                const isCorrect = option.correct;
+                                const showResult = selectedOption !== null;
+                                
+                                let btnStyle = "bg-white border-2 border-gray-200 hover:border-purple-300 text-gray-700";
+                                if (showResult) {
+                                    if (isCorrect) btnStyle = "bg-green-50 border-2 border-green-500 text-green-900";
+                                    else if (isSelected) btnStyle = "bg-red-50 border-2 border-red-500 text-red-900";
+                                    else btnStyle = "bg-gray-50 border-2 border-gray-200 text-gray-400 opacity-50";
+                                }
+
+                                return (
+                                    <button
+                                        key={idx}
+                                        onClick={() => handleSelect(idx)}
+                                        disabled={showResult}
+                                        className={`w-full p-5 rounded-xl text-left font-medium transition-all duration-300 ${btnStyle}`}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-lg">{option.text}</span>
+                                            {showResult && isCorrect && <span className="text-green-600 text-2xl">✓</span>}
+                                            {showResult && isSelected && !isCorrect && <span className="text-red-600 text-2xl">✗</span>}
+                                        </div>
+                                        {showResult && (isSelected || isCorrect) && (
+                                            <div className={`mt-3 pt-3 border-t text-sm ${isCorrect ? 'border-green-200 text-green-800' : 'border-red-200 text-red-800'}`}>
+                                                {option.feedback}
+                                            </div>
+                                        )}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        {selectedOption !== null && (
+                            <div className="mt-8 flex justify-end animate-fade-in">
+                                <button 
+                                    onClick={nextStep}
+                                    className="bg-purple-600 hover:bg-purple-700 text-white rounded-full px-8 py-4 font-bold shadow-lg transition-transform hover:scale-105"
+                                >
+                                    {currentStep < scenarios.length - 1 ? 'Kolejny krok &rarr;' : 'Zakończ spacer'} 
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            ) : (
+                <div className="bg-white rounded-2xl shadow-xl border border-gray-100 text-center p-12">
+                    <div className="w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-6 text-5xl">
+                        {score === scenarios.length ? '🏆' : '⚠️'}
+                    </div>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Podsumowanie Spaceru</h2>
+                    <div className="text-6xl font-black text-purple-600 mb-6">
+                        {score} / {scenarios.length}
+                    </div>
+                    <p className="text-xl text-gray-600 mb-10 max-w-lg mx-auto">
+                        {score === scenarios.length 
+                            ? "Jesteś idealnie przygotowany! Złote zasady profilaktyki masz w małym palcu." 
+                            : "Udało Ci się wrócić, ale popełniłeś kilka błędów. Pamiętaj o ubiorze, repelentach i oględzinach ciała!"}
+                    </p>
+                    <button onClick={restart} className="bg-gray-900 text-white rounded-full px-8 py-4 font-bold hover:bg-gray-800 transition">
+                        Spróbuj ponownie
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
 
 // --- GŁÓWNY KOMPONENT ---
 export default function App() {
@@ -875,9 +1127,8 @@ export default function App() {
             case 'simulator': return <SimulatorView />;
             case 'competition': return <CompetitionView />;
             case 'quiz': return <QuizView />;
-            // Dla nowych zakładek, póki nie stworzymy ich komponentów, renderujemy pusty szablon:
-            case 'map': return <div className="p-12 text-center text-xl font-bold">Moduł Mapy w budowie...</div>;
-            case 'simulator': return <div className="p-12 text-center text-xl font-bold">Moduł Symulatora w budowie...</div>;
+            case 'map': return <MapView />;
+            case 'simulator': return <SimulatorView />;
             default: return <HomeView changeView={setCurrentView} />;
         }
     };
